@@ -4,6 +4,16 @@ require_once ("classes/form.class.php");
 
 $passed = false;
 
+$reqFields = array("table", "filename", "delimiter");
+
+// check to see if the form was submitted
+if(isset($_GET['submit'])&&!empty($_GET['submit'])){
+	// form was submitted
+	
+	// check that the required fields were submitted
+	
+}
+
 // start the page
 echo Page::header("load.php");
 
@@ -18,23 +28,36 @@ echo "<h1>Import Data</h1>";
 if (!$passed) {
 
 	// add the form
-	echo "<form>\n";
+	echo "<form method=\"get\" >\n";
 
 	// add table select
 	$tables = array("cms_banner", "cms_news", "cms_editorial");
-	echo "<label for=\"table\">Table Name: </label>";
+	echo "<label for=\"table\">Table Name: </label>\n";
 	echo Form::buildSelect($tables, "table");
 	
+	echo "<br />\n";
+	
 	// add the file name
-	echo "<label for=\"filename\">File Name: </label>";
-	echo "<input name=\"filename\" size=\"30\"></input>";
+	echo "<label for=\"filename\">File Name: </label>\n";
+	echo "<input name=\"filename\" size=\"30\"></input>\n";
+	
+	echo "<br />\n";
 	
 	// add the delimiter name
-	echo "<label for=\"filename\">Delimiter: </label>";
-	echo "<input name=\"delimiter\" size=\"5\"></input>";
+	echo "<label for=\"delimiter\">Delimiter: </label>\n";
+	echo "<input name=\"delimiter\" size=\"5\" value=\",\"></input>\n";
+	
+	echo "<br />\n";
+	
+	// add the header checkbox
+	echo "<input type=\"checkbox\" name=\"hasheaders\"/>";
+	echo "<label for=\"hasheaders\">File has a Header row?</label>";
 
+	echo "<br />\n";
+	
 	// add the get info submit button
-	echo "<input type=\"submit\" value=\"Get Table Info\"/>";
+	echo "<input type=\"submit\" name=\"submit\" value=\"Get Table Info\"/>\n";
+	
 
 	echo "</form>\n";
 } else {
