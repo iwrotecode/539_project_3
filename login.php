@@ -8,7 +8,19 @@ function __autoload($className) {
 	require_once 'classes/' . $className . '.class.php';
 }
 
+$errors = "";
+
 //check to see if already logged in, if so, re-direct to admin.php
+// do this via the session var
+// get session var and value
+$sessionVar = Utils::getSessionVar();
+$sessionValue = Utils::getSessionVarValue();
+
+// check if it is set and equals the value
+if(isset($_SESSION[$sessionVar]) && ($_SESSION[$sessionVar] == $sessionVar)){
+	// they do, so redirect to admin.php
+	header("Location: admin.php");
+}
 
 //check form submission and if valid
 if (isset($_POST['submit']) && !empty($_POST['submit'])) {
@@ -45,26 +57,37 @@ if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 			if ($dbPassword == sha1($password)) {
 				//if valid login credentials, create appropriate session variables and cookies, then
 				//redirect to admin.php
-				
-				// get session var
-				$sessionValue = Utils::getSessionVarValue();
+
+				// get session var and value
 				$sessionVar = Utils::getSessionVar();
-				
+				$sessionValue = Utils::getSessionVarValue();
+
 				// set session
 				$_SESSION[$sessionVar] = $sessionVar;
-				
+
+				// set cookie 3 days from now
+				$numHours = 48;
+				$expire = time() + (60 * 60 * $numHours);
+				$path = "/~pjm8632/";
+				$domain = "nova.it.rit.edu";
+				$secure = false;
+				setcookie("username", $username, $expire, $path, $domain, $secure);
+
+				// redirect to admin.php
+				header("Location: admin.php");
+
 			} else {
 				//if invalid login credentials, create error message
-				echo "<p>Incorrect username or password.</p>\n";
-				
+				$errors .= "<p>Incorrect username or password.</p>\n";
 			}
 
 		} else {
-
+			// more than one record was found
+			$errors .= "<p>There was a database error <span>(more than one person with same username)</span></p>";
 		} // if count recs == 1
 	} else {
 		//if missing information, create error message
-		echo "<p>Please enter a username and Password</p>\n";
+		$errors .= "<p>Please enter a username and Password</p>\n";
 	} // if credentials are there
 
 }// if submit is correct
@@ -77,28 +100,48 @@ echo Page::addNav();
 
 //display any messages
 
+// display error
+if (!empty($errors)) {
+	echo $errors;
+}
+
 //create and display form
+echo '<form id="form1" name="form1" method="post" action="login.php">' . "\n";
+
+// start container per input
+echo "\t" . '<div>' . "\n";
+// add label
+echo "\t" . "\t" . '<label for="name">User Name:</label>';
+// add input
+echo '<input type="text" name="username" id="name" ';
+// grab cookie for username
+if (isset($_COOKIE['username']) && !empty($_COOKIE['username'])) {
+	// add the cookie as a default value
+	echo 'value = "' . $_COOKIE['username'] . '"';
+}
+echo '/>' . "\n";
+// close the div
+echo "\t" . '</div>' . "\n";
+
+// start container per input
+echo "\t" . '<div>' . "\n";
+// add label
+echo "\t" . "\t" . '<label for="name">Password:</label>';
+// add input
+echo '<input type="password" name="password" id="password" />' . "\n";
+// close the div
+echo "\t" . '</div>' . "\n";
 
 echo <<<END
-<form id="form1" name="form1" method="post" action="login.php">
-			<div>
-				<label for="name">User Name:</label>
-				<input type="text" name="username" id="name" />
-			</div>
-			<div>
-				<label for="name">Password:</label>
-				<input type="password" name="password" id="password" />
-			</div>
-			<div>
-				<input type="submit" name="submit" value="Submit" />
-			</div>
-		</form>
+	<div>
+		<input type="submit" name="submit" value="Submit" />
+	</div>
+</form>
+
 END;
 
 // end the page
 echo Page::footer();
 
 ob_end_flush();
-// end session
-session_destroy();
 ?>
