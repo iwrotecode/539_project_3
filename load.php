@@ -24,11 +24,11 @@ if (!$passed) {
 	$tables = array("cms_banner", "cms_news", "cms_editorial");
 	echo "<label for=\"table\">Table Name: </label>";
 	echo Form::buildSelect($tables, "table");
-	
+
 	// add the file name
 	echo "<label for=\"filename\">File Name: </label>";
 	echo "<input name=\"filename\" size=\"30\"></input>";
-	
+
 	// add the delimiter name
 	echo "<label for=\"filename\">Delimiter: </label>";
 	echo "<input name=\"delimiter\" size=\"5\"></input>";
