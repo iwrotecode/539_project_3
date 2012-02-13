@@ -46,23 +46,23 @@ class Form {
 			$result .= "\t<select";
 			// add the name
 			if(!is_null($name) && is_string($name)){
-				$result .= " name='$name'";
+				$result .= " name=\"$name\"";
 			}
 			// add the id
 			if(!is_null($id) && is_string($id)){
-				$result .= " name='$id'";
+				$result .= " name=\"$id\"";
 			}
 			// add the $class
 			if(!is_null($class) && is_string($class)){
-				$result .= " name='$class'";
+				$result .= " name=\"$class\"";
 			}
 			// add multiple
 			if(is_bool($multiple) && $multiple){
-				$result .= " multiple='multiple'";
+				$result .= " multiple=\"multiple\"";
 			}
 			// add the size
 			if(is_numeric($size)){
-				$result .= " size='$size'";
+				$result .= " size=\"$size\"";
 			}
 			
 			$result .= ">\n";
@@ -70,7 +70,7 @@ class Form {
 			// loop thru and create the options
 			for ($i = 0; $i < $numOptions; $i++) {
 				
-				$result .= "\t\t<option value='".$values[$i]."'>".$texts[$i]."</option>\n";
+				$result .= "\t\t<option value=\"".$values[$i]."\">".$texts[$i]."</option>\n";
 			}
 
 			// end the select
