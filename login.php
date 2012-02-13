@@ -65,14 +65,8 @@ if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 				// set session
 				$_SESSION[$sessionVar] = $sessionVar;
 
-				// set cookie 3 days from now
-				$numHours = 48;
-				$expire = time() + (60 * 60 * $numHours);
-				$path = "/~pjm8632/";
-				$domain = "nova.it.rit.edu";
-				$secure = false;
-				
-				setcookie("username", $username, $expire, $path, $domain, $secure);
+				// set cookie
+				Utils::setcookie("username", $username);
 
 				// redirect to admin.php
 				header("Location: admin.php");
