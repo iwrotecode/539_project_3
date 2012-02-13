@@ -52,5 +52,18 @@ END;
 		}
 	}
 
+	static function checkAccess($which = array(0)) {
+		$ok = false;
+		if (!isset($_SESSION['user']) || !isset($_SESSION['access'])) {
+			echo "You are not logged in.  Please <a href='login.php'>login</a>";
+		} else if (!in_array($_SESSION['access'], $which) == 1) {
+			echo "You don't have proper access.  Please <a href='login.php'>login</a> again.";
+		}//logged in with not correct access
+		else
+			$ok = true;
+		return $ok;
+
+	}  //checkAccess
+
 } // end class Page
 ?>
