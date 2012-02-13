@@ -46,8 +46,10 @@ if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 		// get the stored password
 		$records = $db -> fetch_all_array();
 
+		$recCount = count($records);
+
 		// makes sure only one record was passed back
-		if (count($records) == 1) {
+		if ($recCount == 1) {
 			$record = $records[0];
 			// get the password
 			$dbPassword = $record['password'];
@@ -76,10 +78,12 @@ if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 				$errors .= "<p>Incorrect username or password.</p>\n";
 			}
 
-		} else {
+		} else if($recCount > 1){
 			// more than one record was found
 			$errors .= "<p>There was a database error <span>(more than one person with same username)</span></p>";
-		} // if count recs == 1
+		} else{
+			$errors .= "<p>Username does not exist</p>";
+		}// if count recs == 1
 	} else {
 		//if missing information, create error message
 		$errors .= "<p>Please enter a username and Password</p>\n";
