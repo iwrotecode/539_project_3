@@ -43,7 +43,7 @@ class Form {
 			}
 			
 			// start the select
-			$result .= "<select";
+			$result .= "\t<select";
 			// add the name
 			if(!is_null($name) && is_string($name)){
 				$result .= " name='$name'";
@@ -65,16 +65,16 @@ class Form {
 				$result .= " size='$size'";
 			}
 			
-			$result .= ">";
+			$result .= ">\n";
 			
 			// loop thru and create the options
 			for ($i = 0; $i < $numOptions; $i++) {
 				
-				$result .= "<option value='".$values[$i]."'>".$texts[$i]."</option>";
+				$result .= "\t\t<option value='".$values[$i]."'>".$texts[$i]."</option>\n";
 			}
 
 			// end the select
-			$result .= "</select>";
+			$result .= "\t</select>\n";
 		}
 
 		return $result;
