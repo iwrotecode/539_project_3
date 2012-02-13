@@ -71,6 +71,7 @@ if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 				$path = "/~pjm8632/";
 				$domain = "nova.it.rit.edu";
 				$secure = false;
+				
 				setcookie("username", $username, $expire, $path, $domain, $secure);
 
 				// redirect to admin.php
