@@ -1,6 +1,11 @@
 <?php
 		class Utils{
-			public static $sessionVar = "cms_session";
+			private static $sessionVar = "cms_session";
+			
+			// TODO: Cookie variables
+			private static $path = "/~pjm8632/";
+			private static $domain = "nova.it.rit.edu";
+			private static $secure = false;
 			
 			static function getSessionVarValue(){
 				// get ip address
@@ -19,5 +24,13 @@
 				return self::$sessionVar;
 			}
 			
+			static function setcookie($name, $value, $expire, $path=null, $domain=null, $secure=null){
+				if(!$path){
+					
+				}
+				
+				
+				setcookie($name, $value, $expire, $path, $domain, $secure);
+			}
 		}
 ?>
