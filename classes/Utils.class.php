@@ -1,6 +1,4 @@
 <?php
-    phpinfo();
-		
 		class Utils{
 			public static $sessionVar = "cms_session";
 			
@@ -14,11 +12,12 @@
 				// add salt
 				$salt = "pedroANDmatt";
 				
-				return $salt.$ip.$browser;
+				return $salt.$ip.$broswer;
 			}
 			
 			static function getSessionVar(){
 				return self::$sessionVar;
 			}
+			
 		}
 ?>
