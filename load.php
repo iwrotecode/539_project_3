@@ -3,6 +3,7 @@ require_once ("classes/page.class.php");
 require_once ("classes/form.class.php");
 
 $passed = false;
+var_dump($_GET);
 
 // start the page
 echo Page::header("load.php");
@@ -31,7 +32,7 @@ if (!$passed) {
 	
 	// add the delimiter name
 	echo "<label for=\"filename\">Delimiter: </label>";
-	echo "<input name=\"delimiter\" size=\"5\"></input>";
+	echo "<input name=\"delimiter\" value=\",\" size=\"5\"></input>";
 
 	// add the get info submit button
 	echo "<input type=\"submit\" value=\"Get Table Info\"/>";
@@ -39,6 +40,10 @@ if (!$passed) {
 	echo "</form>\n";
 } else {
 	// since they passed, build the other form
+	
+	// get the column names for the table
+	
+	
 }
 
 // end the page
