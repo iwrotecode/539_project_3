@@ -31,7 +31,7 @@ echo Page::addNav();
 	// echo "$k=$v<br />";
 // }
 
-echo Utils::displayTables();
+echo Utils::displayDBTables();
 
 echo Page::footer();
 

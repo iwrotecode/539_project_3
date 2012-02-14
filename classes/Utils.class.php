@@ -95,20 +95,19 @@ class Utils {
 	}
 
 	// grabs all tables in the DB, and returns a form to select them
-	static function displayTables() {
-		if (isset($_GET['selectDB'])) {
-			echo "<p>submit was detected</p>";
-			$table = $_GET['table'];
-			self::displayEditTable($tableName);
+	static function displayDBTables() {
+		if (isset($_POST['selectDatabaseTable'])) {
+			$tableName = $_POST['database_table'];
+			self::generateEditTableSQL($tableName);
 		}
-		
+
 		// grab all tables
 		$db = Database::getInstance();
 		$tableNames = $db -> getValidTableNames();
 
 		// starts form to select table
-		$string = '<form action="admin.php" name="select_database" method="get">';
-		$string = '<select name="table">';
+		$string = '<form action="admin.php" name="select_database_table" method="post">';
+		$string .= '<select name="database_table">';
 
 		// loops through tables as a select
 		foreach ($tableNames as $table) {
@@ -117,46 +116,70 @@ class Utils {
 
 		// closes form
 		$string .= '</select>';
-		$string .= '<input type="submit" name="selectDB" value="Select" />';
+		$string .= '<input type="submit" name="selectDatabaseTable" value="Select" />';
 		$string .= '</form>';
 
 		return $string;
 	}
 
-	static function displayEditTable($tableName) {
+	// runs the select all query on passed database table
+	static function generateEditTableSQL($tableName) {
 		$db = Database::getInstance();
-		
-		$colInfo = $db->getColInfo($tableName); 
-		
-		self::displayTable($colInfo);
+
+		// initializes query
+		$sql = "SELECT * FROM $tableName";
+
+		// executes query
+		$err = $db -> doQuery($sql);
+
+		// grabs results of query
+		$results = $db -> fetch_all_array();
+
+		// calls function to display results in a table
+		self::displayDBTableForm($results);
 	}
 
-	static function displayTable($data){
-		$string = "<table border='1'>";
-		
-		$string .= "<tr>";
-		
-		$keys = array_keys(array_pop(array_slice($data, 0, 1)));
-		
-		foreach ($keys as $key) {
-			$string .= "<th>$key</th>";
-		}
-		
-		$string .= "</tr>";
-		
-		foreach ($data as $column => $field) {
+	// formats database table output into a table
+	static function displayDBTableForm($results) {
+		// checks to see if database table has content
+		if (!empty($results)) {
+			// starts html table
+			$string = "<form name='edit_database_table' action='admin.php' method='post'>";
+			$string .= "<table border='1'>";
 			$string .= "<tr>";
 			
-			foreach ($field as $fieldInfo) {
-				$string .= "<td>$fieldInfo</td>";
+			// creates header for html table
+			$header = array_keys(array_pop(array_slice($results, 0, 1)));
+	
+			// loops through database table for html table header elements
+			foreach ($header as $header_element) {
+				$string .= "<th>$header_element</th>";
 			}
+	
+			$string .= "<th>actions</th>";
 			$string .= "</tr>";
+	
+			// loops through database table for fields
+			foreach ($results as $column => $field) {
+				$string .= "<tr>";
+	
+				foreach ($field as $test => $fieldInfo) {
+					$string .= "<td><input type='text' name='$field' value='$fieldInfo'></td>";
+				}
+				$string .= "<td><input type='submit' name='deleteDBRecord' value='Delete'/><input type='submit' name='modifyDBRecord' value='Modify'/></td>";
+				$string .= "</tr>";
+			}
+	
+			$string .= "</table>";
+			$string .= "</form>";
+	
+			echo $string;
+		
+		// reports if no data in table is found
+		} else {
+			echo "<p>No data in database table</p>";
 		}
-		
-		$string .= "</table>";
-		
-		echo $string;
-}
+	}
 
 }
 ?>
