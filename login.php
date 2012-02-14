@@ -67,9 +67,8 @@ if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 				// set session
 				$_SESSION[$sessionVar] = $sessionValue;
 				
-
 				// set cookie
-				Utils::setcookie("username", $username);
+				$test = Utils::setcookie("username", $username);
 
 				// redirect to admin.php
 				header("Location: admin.php");

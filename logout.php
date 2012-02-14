@@ -9,11 +9,5 @@ function __autoload($className) {
 unset($_SESSION);
 session_destroy();
 
-// destroy the cookie
-Utils::expireCookie("username");
-
-// unset the cookie
-unset($_COOKIE['username']);
-
 header("Location: login.php");
 ?>
