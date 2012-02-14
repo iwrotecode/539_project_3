@@ -1,4 +1,5 @@
 <?php
+
 class Utils {
 	private static $sessionVar = "cms_session";
 
@@ -75,7 +76,7 @@ class Utils {
 
 	/**
 	 * Checks to see if the user is logged.
-	 * 
+	 *
 	 * @return true if they are
 	 */
 	static function isLoggedIn() {
@@ -92,6 +93,70 @@ class Utils {
 
 		return $result;
 	}
+
+	// grabs all tables in the DB, and returns a form to select them
+	static function displayTables() {
+		if (isset($_GET['selectDB'])) {
+			echo "<p>submit was detected</p>";
+			$table = $_GET['table'];
+			self::displayEditTable($tableName);
+		}
+		
+		// grab all tables
+		$db = Database::getInstance();
+		$tableNames = $db -> getValidTableNames();
+
+		// starts form to select table
+		$string = '<form action="admin.php" name="select_database" method="get">';
+		$string = '<select name="table">';
+
+		// loops through tables as a select
+		foreach ($tableNames as $table) {
+			$string .= "<option value=$table>$table</option>";
+		}
+
+		// closes form
+		$string .= '</select>';
+		$string .= '<input type="submit" name="selectDB" value="Select" />';
+		$string .= '</form>';
+
+		return $string;
+	}
+
+	static function displayEditTable($tableName) {
+		$db = Database::getInstance();
+		
+		$colInfo = $db->getColInfo($tableName); 
+		
+		self::displayTable($colInfo);
+	}
+
+	static function displayTable($data){
+		$string = "<table border='1'>";
+		
+		$string .= "<tr>";
+		
+		$keys = array_keys(array_pop(array_slice($data, 0, 1)));
+		
+		foreach ($keys as $key) {
+			$string .= "<th>$key</th>";
+		}
+		
+		$string .= "</tr>";
+		
+		foreach ($data as $column => $field) {
+			$string .= "<tr>";
+			
+			foreach ($field as $fieldInfo) {
+				$string .= "<td>$fieldInfo</td>";
+			}
+			$string .= "</tr>";
+		}
+		
+		$string .= "</table>";
+		
+		echo $string;
+}
 
 }
 ?>

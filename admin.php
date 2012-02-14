@@ -4,7 +4,7 @@ session_start();
 ob_start();
 
 //if not logged in, re-direct to login.php
-if(!Utils::isLoggedIn()){
+if (!Utils::isLoggedIn()) {
 	header("Location: login.php");
 }
 
@@ -21,15 +21,17 @@ echo Page::header("Admin Page");
 echo Page::addNav();
 
 //output the session variables and cookies
-echo "<p>Session Vars</p>";
-foreach ($_SESSION as $k => $v) {
-	echo "$k=$v<br />";
-}
+// echo "<p><strong>Session Vars</strong></p>";
+// foreach ($_SESSION as $k => $v) {
+	// echo "$k=$v<br />";
+// }
+// 
+// echo "<p><strong>Cookies</strong></p>";
+// foreach ($_COOKIE as $k => $v) {
+	// echo "$k=$v<br />";
+// }
 
-echo "<p>Cookies</p>";
-foreach ($_COOKIE as $k => $v) {
-	echo "$k=$v<br />";
-}
+echo Utils::displayTables();
 
 echo Page::footer();
 
