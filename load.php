@@ -14,8 +14,10 @@ if (!Utils::isLoggedIn()) {
 	header("Location: login.php");
 }
 
+$styles = array("css/load.css");
+
 // start the page
-echo Page::header("load.php");
+echo Page::header("load.php", $styles);
 
 // add navigation
 echo Page::addNav();
@@ -130,7 +132,7 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 	} else {
 		for ($i = 0; $i < $numColumns; $i++) {
 			// build the headers
-			$headers[] = "col$i";
+			$headers[] = "col $i";
 			
 			// build the values array
 			$values[] = $i;
@@ -143,6 +145,10 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 			$values[] = $i;
 		}
 	}
+	
+	// prepend both arrays with a dummy field
+	array_unshift($headers, "--none--");
+	array_unshift($values, "na");
 	
 	// ******************* BUILD THE FORM ***********************
 	
@@ -163,7 +169,7 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 		$result .= "<label for='$field'>$field</label>";	
 					
 		// build the select
-		$result .= Form::buildSelect($values, $field, $headers);
+		$result .= Form::buildSelect($values, $field, $headers, null, "fileAssocSelect");
 	}
 	
 	$result .= "</form>\n";
