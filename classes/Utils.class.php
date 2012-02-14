@@ -3,10 +3,10 @@ class Utils {
 	private static $sessionVar = "cms_session";
 
 	// Cookie variables
-	// TODO: Change for nova
-	private static $path = "/539_project_3/";
-	private static $domain = "localhost";
-	private static $secure = false;
+	// TODO: Might need this for NOVA
+	// private static $path = "/539_project_3/";
+	// private static $domain = "localhost";
+	// private static $secure = false;
 	private static $daysExpire = 3;
 
 	static function getSessionVarValue() {
