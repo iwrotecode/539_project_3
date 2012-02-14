@@ -98,10 +98,36 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 	echo "<p>hey, we made it to associate fields</p>";
 	
 	// pull the column names from the table
+	$db->getInstance();
+	$fieldNames = $db->getColNames($tableName); // returns an array
 	
 	// use the delim to load the file in a array
+	$lines = Utils::return_file_as_array(Utils::getLoadFileLoc().$tableName);
+	
+	$records = array();
+	// go thru the lines of the file
+	foreach($lines as $line){
+		// for each line, explode it based on the delim and add the array to records
+		$records[] = explode($delim, $line);
+	}
+
+	echo "here are the records";
+	var_dump($records);
+
+	// get the number of columns
+	$numColumns = count($records[0][0]);
+	
 	
 	// use the header row to check if we can
+	$headers = array();
+	if($hasHeaderRow){
+		
+	} else{
+		for($i = 0; $i<$numColumns; $i++){
+			
+		}
+	}
+	
 	
 	// build the field select
 	
@@ -122,9 +148,13 @@ function addChooseFileForm() {
 
 	$result .= "<br />\n";
 
-	// add the file name
+	// add the file name select
+	// get the file names in the load data directory
+	$fileNames = Utils::getFileNames(Utils::getLoadFileLoc());
+	
 	$result .= "<label for=\"filename\">File Name: </label>\n";
-	$result .= "<input name=\"filename\" size=\"30\"></input>\n";
+	// $result .= "<input name=\"filename\" size=\"30\"></input>\n";
+	$result .= Form::buildSelect($fileNames, "filename");
 
 	$result .= "<br />\n";
 
