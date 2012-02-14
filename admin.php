@@ -4,13 +4,7 @@ session_start();
 ob_start();
 
 //if not logged in, re-direct to login.php
-// get session var and value
-$sessionVar = Utils::getSessionVar();
-$sessionValue = Utils::getSessionVarValue();
-
-// check if it is set and equals the value
-if (!isset($_SESSION[$sessionVar]) || ($_SESSION[$sessionVar] != $sessionValue)) {
-	// they do, so redirect to admin.php
+if(!Utils::isLoggedIn()){
 	header("Location: login.php");
 }
 
