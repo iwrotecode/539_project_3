@@ -9,6 +9,13 @@ class Utils {
 	// private static $secure = false;
 	private static $daysExpire = 3;
 
+	// variables for loading data
+	private static $loadFileLoc = "load_data";
+
+	static function getLoadFileLoc() {
+		return self::$loadFileLoc;
+	}
+
 	static function getSessionVarValue() {
 		// get ip address
 		$ip = $_SERVER['REMOTE_ADDR'];
@@ -75,7 +82,7 @@ class Utils {
 
 	/**
 	 * Checks to see if the user is logged.
-	 * 
+	 *
 	 * @return true if they are
 	 */
 	static function isLoggedIn() {
@@ -95,23 +102,57 @@ class Utils {
 
 	/**
 	 * Make sure that the keys specified exist in the array and its value is not empty
-	 * 
+	 *
 	 * @param $array - associative array to check
 	 * @param keys - keys to look for in the array
-	 * 
+	 *
 	 * @return true if the keys exist and its value is not empty
 	 */
-	static function arrayContainsVals($array, $keys){
+	static function arrayContainsVals($array, $keys) {
 		$result = true;
-		
-		foreach($keys as $key){
-			if(!isset($array[$key]) || empty($array[$key])){
+
+		foreach ($keys as $key) {
+			if (!isset($array[$key]) || empty($array[$key])) {
 				$result = false;
 				break;
 			}
 		}
-		
+
 		return $result;
 	}
+
+	static function return_file_as_array($path) {
+		if (file_exists($path) && is_readable($path)) {
+			return @file($path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
+		} else {
+			die("<strong>Problem loading file at #path!</strong>");
+		}
+	}
+
+	/**
+	 * returns an array containing the files contained in the directory.
+	 *
+	 * Null if the specified dir is not a directory
+	 */
+	static function getFileNames($dir) {
+		$result = null;
+
+		if (is_dir($dir) && ($handle = opendir($dir))) {
+			$result = array();
+			
+			// while we can read a file
+			while (false !== ($entry = readdir($handle))) {
+				// skip over unix directories
+				if ($entry != "." && $entry != "..") {
+					// add entry 
+					$result[] = $entry;
+				}
+			}
+			closedir($handle);
+		}
+
+		return $result;
+	}
+
 }
 ?>
