@@ -73,5 +73,25 @@ class Utils {
 		return self::setCookie($name, "", $expire);
 	}
 
+	/**
+	 * Checks to see if the user is logged.
+	 * 
+	 * @return true if they are
+	 */
+	static function isLoggedIn() {
+		$result = false;
+		// get session var and value
+		$sessionVar = Utils::getSessionVar();
+		$sessionValue = Utils::getSessionVarValue();
+
+		// check if it is set and equals the value
+		if (isset($_SESSION[$sessionVar]) && ($_SESSION[$sessionVar] == $sessionValue)) {
+			// they do, so redirect to admin.php
+			$result = true;
+		}
+
+		return $result;
+	}
+
 }
 ?>
