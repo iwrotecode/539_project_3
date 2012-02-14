@@ -38,16 +38,15 @@ $errors = "";
 // the required fields
 $filenameFormReqFields = array("table", "filename", "delimiter");
 
-var_dump($_GET);
-
 // check to see if the form was submitted
 if (isset($_GET['submit']) && !empty($_GET['submit']) && $_GET['submit'] == $submitFileName) {
 	// form was submitted
 
 	// check that the required fields were submitted
 	if (Utils::arrayContainsVals($_GET, $filenameFormReqFields)) {
+
 		$tableName = $_GET['table'];
-		$fileName = $_GET['filename'];
+		$fileName = Utils::getLoadFileLoc() . "/" . $_GET['filename'];
 		$delim = $_GET['delimiter'];
 		$hasHeaderRow = false;
 
@@ -58,7 +57,8 @@ if (isset($_GET['submit']) && !empty($_GET['submit']) && $_GET['submit'] == $sub
 		}
 
 		//check if file exists
-		if (file_exists(Utils::getLoadFileLoc().$fileName)) {
+		if (file_exists($fileName)) {
+			$passed = true;
 			// display the associate field form
 			echo addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow);
 		} else {
@@ -98,47 +98,77 @@ ob_end_flush();
  */
 function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = false) {
 	echo "<p>hey, we made it to associate fields</p>";
-	
+
 	// pull the column names from the table
-	$db->getInstance();
-	$fieldNames = $db->getColNames($tableName); // returns an array
+	// get database instance
+	$db = Database::getInstance();
+	$fieldNames = $db -> getColNames($tableName);
+	// returns an array
 	
 	// use the delim to load the file in a array
-	$lines = Utils::return_file_as_array(Utils::getLoadFileLoc().$tableName);
-	
-	echo "here are the records";
-	var_dump($lines);
-	
+	$lines = Utils::return_file_as_array($fileName);
+
 	$records = array();
 	// go thru the lines of the file
-	foreach($lines as $line){
+	foreach ($lines as $line) {
 		// for each line, explode it based on the delim and add the array to records
 		$records[] = explode($delim, $line);
 	}
 
-	echo "here are the records";
-	var_dump($records);
-
 	// get the number of columns
-	$numColumns = count($records[0][0]);
-	
-	echo "<p>Number of columns: $numColumns</p>";
-	
-	
+	$numColumns = count($records[0]);
+
 	// use the header row to check if we can
 	$headers = array();
-	if($hasHeaderRow){
-		
-	} else{
-		for($i = 0; $i<$numColumns; $i++){
+	$values = array();
+	
+	// fill the headers for the select
+	if ($hasHeaderRow) {
+		foreach($records[0] as $headerField){
+			$headers[] = $headerField;
+		}
+	} else {
+		for ($i = 0; $i < $numColumns; $i++) {
+			// build the headers
+			$headers[] = "col$i";
 			
+			// build the values array
+			$values[] = $i;
 		}
 	}
 	
+	// fill the values array, since it wasnt done for the headers
+	if ($hasHeaderRow) {
+		for ($i = 0; $i < $numColumns; $i++) {
+			$values[] = $i;
+		}
+	}
 	
-	// build the field select
+	// ******************* BUILD THE FORM ***********************
 	
 	// build the form
+	$result = "<form method=\"get\">\n";
+	
+	// add a hidden field for the table name and the file name, add if they have a 
+	// field header
+	$result .= "<input type='hidden' name='table' value='$tableName' />";
+	$result .= "<input type='hidden' name='filename' value='$fileName' />";
+	$result .= "<input type='hidden' name='delimiter' value='$delim' />";
+	$result .= "<input type='hidden' name='hasheaders' value='$hasHeaderRow' />";
+	
+	// build the field select
+	// the name should be the field name, then the value should be the column number
+	foreach($fieldNames as $field){
+		// build the label
+		$result .= "<label for='$field'>$field</label>";	
+					
+		// build the select
+		$result .= Form::buildSelect($values, $field, $headers);
+	}
+	
+	$result .= "</form>\n";
+	
+	return $result;
 }
 
 function addChooseFileForm() {
@@ -158,7 +188,7 @@ function addChooseFileForm() {
 	// add the file name select
 	// get the file names in the load data directory
 	$fileNames = Utils::getFileNames(Utils::getLoadFileLoc());
-	
+
 	$result .= "<label for=\"filename\">File Name: </label>\n";
 	// $result .= "<input name=\"filename\" size=\"30\"></input>\n";
 	$result .= Form::buildSelect($fileNames, "filename");
