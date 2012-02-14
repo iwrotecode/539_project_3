@@ -3,14 +3,14 @@
 session_start();
 ob_start();
 
-//if not logged in, re-direct to login.php
-if(!Utils::isLoggedIn()){
-	header("Location: login.php");
-}
-
 //include any libraries/classes needed
 function __autoload($className) {
 	require_once 'classes/' . $className . '.class.php';
+}
+
+//if not logged in, re-direct to login.php
+if(!Utils::isLoggedIn()){
+	header("Location: login.php");
 }
 
 // start the page
