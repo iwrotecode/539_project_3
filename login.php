@@ -17,7 +17,7 @@ $sessionVar = Utils::getSessionVar();
 $sessionValue = Utils::getSessionVarValue();
 
 // check if it is set and equals the value
-if (isset($_SESSION[$sessionVar]) && ($_SESSION[$sessionVar] == $sessionVar)) {
+if (isset($_SESSION[$sessionVar]) && ($_SESSION[$sessionVar] == $sessionValue)) {
 	// they do, so redirect to admin.php
 	header("Location: admin.php");
 }
@@ -63,9 +63,10 @@ if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 				// get session var and value
 				$sessionVar = Utils::getSessionVar();
 				$sessionValue = Utils::getSessionVarValue();
-
+				
 				// set session
-				$_SESSION[$sessionVar] = $sessionVar;
+				$_SESSION[$sessionVar] = $sessionValue;
+				
 
 				// set cookie
 				Utils::setcookie("username", $username);

@@ -9,7 +9,7 @@ $sessionVar = Utils::getSessionVar();
 $sessionValue = Utils::getSessionVarValue();
 
 // check if it is set and equals the value
-if (!isset($_SESSION[$sessionVar]) || ($_SESSION[$sessionVar] != $sessionVar)) {
+if (!isset($_SESSION[$sessionVar]) || ($_SESSION[$sessionVar] != $sessionValue)) {
 	// they do, so redirect to admin.php
 	header("Location: login.php");
 }
