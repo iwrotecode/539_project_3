@@ -10,6 +10,13 @@ class Utils {
 	// private static $secure = false;
 	private static $daysExpire = 3;
 
+	// variables for loading data
+	private static $loadFileLoc = "load_data";
+
+	static function getLoadFileLoc() {
+		return self::$loadFileLoc;
+	}
+
 	static function getSessionVarValue() {
 		// get ip address
 		$ip = $_SERVER['REMOTE_ADDR'];
@@ -147,38 +154,92 @@ class Utils {
 			$string = "<form name='edit_database_table' action='admin.php' method='post'>";
 			$string .= "<table border='1'>";
 			$string .= "<tr>";
-			
+
 			// creates header for html table
 			$header = array_keys(array_pop(array_slice($results, 0, 1)));
-	
+
 			// loops through database table for html table header elements
 			foreach ($header as $header_element) {
 				$string .= "<th>$header_element</th>";
 			}
-	
+
 			$string .= "<th>actions</th>";
 			$string .= "</tr>";
-	
+
 			// loops through database table for fields
 			foreach ($results as $column => $field) {
 				$string .= "<tr>";
-	
+
 				foreach ($field as $test => $fieldInfo) {
 					$string .= "<td><input type='text' name='$field' value='$fieldInfo'></td>";
 				}
 				$string .= "<td><input type='submit' name='deleteDBRecord' value='Delete'/><input type='submit' name='modifyDBRecord' value='Modify'/></td>";
 				$string .= "</tr>";
 			}
-	
+
 			$string .= "</table>";
 			$string .= "</form>";
-	
+
 			echo $string;
-		
-		// reports if no data in table is found
+
+			// reports if no data in table is found
 		} else {
 			echo "<p>No data in database table</p>";
 		}
+	}
+
+	/**
+	 * Make sure that the keys specified exist in the array and its value is not empty
+	 *
+	 * @param $array - associative array to check
+	 * @param keys - keys to look for in the array
+	 *
+	 * @return true if the keys exist and its value is not empty
+	 */
+	static function arrayContainsVals($array, $keys) {
+		$result = true;
+
+		foreach ($keys as $key) {
+			if (!isset($array[$key]) || empty($array[$key])) {
+				$result = false;
+				break;
+			}
+		}
+
+		return $result;
+	}
+
+	static function return_file_as_array($path) {
+		if (file_exists($path) && is_readable($path)) {
+			return @file($path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
+		} else {
+			die("<strong>Problem loading file at #path!</strong>");
+		}
+	}
+
+	/**
+	 * returns an array containing the files contained in the directory.
+	 *
+	 * Null if the specified dir is not a directory
+	 */
+	static function getFileNames($dir) {
+		$result = null;
+
+		if (is_dir($dir) && ($handle = opendir($dir))) {
+			$result = array();
+
+			// while we can read a file
+			while (false !== ($entry = readdir($handle))) {
+				// skip over unix directories
+				if ($entry != "." && $entry != "..") {
+					// add entry
+					$result[] = $entry;
+				}
+			}
+			closedir($handle);
+		}
+
+		return $result;
 	}
 
 }

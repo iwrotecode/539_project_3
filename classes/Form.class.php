@@ -50,11 +50,11 @@ class Form {
 			}
 			// add the id
 			if(!is_null($id) && is_string($id)){
-				$result .= " name=\"$id\"";
+				$result .= " id=\"$id\"";
 			}
 			// add the $class
 			if(!is_null($class) && is_string($class)){
-				$result .= " name=\"$class\"";
+				$result .= " class=\"$class\"";
 			}
 			// add multiple
 			if(is_bool($multiple) && $multiple){
