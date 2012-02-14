@@ -93,5 +93,25 @@ class Utils {
 		return $result;
 	}
 
+	/**
+	 * Make sure that the keys specified exist in the array and its value is not empty
+	 * 
+	 * @param $array - associative array to check
+	 * @param keys - keys to look for in the array
+	 * 
+	 * @return true if the keys exist and its value is not empty
+	 */
+	static function arrayContainsVals($array, $keys){
+		$result = true;
+		
+		foreach($keys as $key){
+			if(!isset($array[$key]) || empty($array[$key])){
+				$result = false;
+				break;
+			}
+		}
+		
+		return $result;
+	}
 }
 ?>
