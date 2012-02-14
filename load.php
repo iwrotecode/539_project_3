@@ -93,6 +93,11 @@ ob_end_flush();
 ?>
 
 <?php
+
+function importData($tableName, $fileName, $delim, $hasHeaderRow){
+	
+}
+
 /**
  * Grabs the column names from the specified table, then tries to associate the
  * fields to columns in the file. The file is split up based on the delim used
