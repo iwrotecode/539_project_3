@@ -38,6 +38,8 @@ $errors = "";
 // the required fields
 $filenameFormReqFields = array("table", "filename", "delimiter");
 
+var_dump($_GET);
+
 // check to see if the form was submitted
 if (isset($_GET['submit']) && !empty($_GET['submit']) && $_GET['submit'] == $submitFileName) {
 	// form was submitted
@@ -56,7 +58,7 @@ if (isset($_GET['submit']) && !empty($_GET['submit']) && $_GET['submit'] == $sub
 		}
 
 		//check if file exists
-		if (file_exists($fileName)) {
+		if (file_exists(Utils::getLoadFileLoc().$fileName)) {
 			// display the associate field form
 			echo addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow);
 		} else {
@@ -104,6 +106,9 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 	// use the delim to load the file in a array
 	$lines = Utils::return_file_as_array(Utils::getLoadFileLoc().$tableName);
 	
+	echo "here are the records";
+	var_dump($lines);
+	
 	$records = array();
 	// go thru the lines of the file
 	foreach($lines as $line){
@@ -116,6 +121,8 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 
 	// get the number of columns
 	$numColumns = count($records[0][0]);
+	
+	echo "<p>Number of columns: $numColumns</p>";
 	
 	
 	// use the header row to check if we can
