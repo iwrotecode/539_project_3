@@ -49,9 +49,10 @@ if (isset($_GET['submit']) && !empty($_GET['submit'])) {
 		if (Utils::arrayContainsVals($_GET, $reqFields)) {
 
 			// start processing of getting table info
-			$errors .= "<p>" . processGetTableInfo() . "</p>";
+			$result = processGetTableInfo();
+			$errors .= (!empty($result)? "<p>" . processGetTableInfo() . "</p>": "");
 
-			$passed = true;
+			// $passed = true;
 
 		} else {
 			// ERROR: missing one or more required fields
@@ -66,7 +67,8 @@ if (isset($_GET['submit']) && !empty($_GET['submit'])) {
 		if (Utils::arrayContainsVals($_SESSION, $reqFields)) {
 
 			// start processing for import
-			$errors .= "<p>" . processImport() . "</p>";
+			$result = processImport();
+			$errors .= (!empty($result)? "<p>" . processGetTableInfo() . "</p>": "");
 
 			// they passed
 			$passed = true;
@@ -174,17 +176,14 @@ function processImport() {
 		// close the query
 		$query .= ")";
 		
-		echo "Field names";
-		var_dump($fieldNames);
-
-		
 		$start = intval($hasHeaderRow);
 		$end = count($records);
 		
 		// start inserting the records
 		for($i = $start; $i<$end; $i++){
+			// grab a record, which is an array of the columns from a single line
 			$record = $records[$i];
-		// foreach ($records as $record) {
+
 			// setup a data array	
 			$data = array();
 			// setup types array
@@ -198,7 +197,19 @@ function processImport() {
 				// make sure the col is not empty and a number
 				if(strlen($col)>0){
 					$col = intval($col);
-					$data[$field] = trim($record[$col]);	
+					
+					echo "Record";
+					var_dump($record);
+					$item = trim($record[$col]);
+					
+					// // change the formatting for pubdate
+					// if($field == "pubdate"){
+						// echo "Field was: $field";
+// 						
+						// // $record = strtotime($record);
+					// }
+					
+					$data[$field] = $item;	
 				} else{
 					// just insert a blank
 					$data[$field] = "";
@@ -206,15 +217,18 @@ function processImport() {
 				$types[$field] = "s";
 			}
 			
-			echo "Data";
-			var_dump($data);
-			
-			echo "Types";
-			var_dump($types);
-			
 			// insert into array
 			$db = Database::getInstance();
-			$db->doQuery($query, $data, $types);
+			$queryError = $db->doQuery($query, $data, $types);
+			
+			if(empty($queryError)){
+				echo "Record $i was added!";
+			} else{
+				echo "Record $i could not be added! Reason: $queryError";
+			}
+			
+			$error .= $queryError;
+			
 		}
 	} else {
 		$error .= "Something went wrong, missing one or more required fields";
@@ -311,7 +325,7 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	// ******************* BUILD THE FORM ***********************
 
 	// build the form
-	$result = "<div class='content'>\n";
+	$result = "<div class='error_message' >\n";
 	$result .= "<form method=\"get\">\n";
 
 	// instead of hidden elements, lets build session variables to store essential info
@@ -324,11 +338,16 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	// build the field select
 	// the name should be the field name, then the value should be the column number
 	foreach ($fieldNames as $field) {
+		// enclose in container
+		$result .= "<p>";
+		
 		// build the label
 		$result .= "<label for='$field'>$field</label>";
 
 		// build the select
 		$result .= Form::buildSelect($values, $field, $headers, null, "fileAssocSelect");
+		
+		$result .= "</p>";
 	}
 
 	// add the reset button
@@ -380,10 +399,10 @@ function addChooseFileForm() {
 	// add the delimiter name
 	$result .= "<div class='login_form'>";
 	$result .= "<label for=\"delimiter\">Delimiter: </label>\n";
-	$result .= "<input name=\"delimiter\" size=\"5\" value=\",\" style='width:.5em;'></input>\n";
+	$result .= "<input name=\"delimiter\" size=\"5\" value=\"|\" style='width:.5em;'></input>\n";
 
 	// add the reset button
-	$result .= "<input type='reset' />";
+	// $result .= "<input type='reset' />";
 
 	// add the get info submit button
 	$result .= "<input type=\"submit\" name=\"submit\" value=\"$submitFileName\"/>\n";
