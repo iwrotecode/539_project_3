@@ -113,7 +113,8 @@ class Utils {
 		$tableNames = $db -> getValidTableNames();
 
 		// starts form to select table
-		$string = '<form action="admin.php" name="select_database_table" method="post">';
+		$string = "<div class='content'>";
+		$string .= '<form action="admin.php" name="select_database_table" method="post">';
 		$string .= '<select name="database_table">';
 
 		// loops through tables as a select
@@ -125,6 +126,7 @@ class Utils {
 		$string .= '</select>';
 		$string .= '<input type="submit" name="selectDatabaseTable" value="Select" />';
 		$string .= '</form>';
+		$string .= "</div>";
 
 		return $string;
 	}
@@ -151,7 +153,8 @@ class Utils {
 		// checks to see if database table has content
 		if (!empty($results)) {
 			// starts html table
-			$string = "<form name='edit_database_table' action='admin.php' method='post'>";
+			$string = "<div class='content content_results'>";
+			$string .= "<form name='edit_database_table' action='admin.php' method='post'>";
 			$string .= "<table border='1'>";
 			$string .= "<tr>";
 
@@ -179,13 +182,14 @@ class Utils {
 
 			$string .= "</table>";
 			$string .= "</form>";
-
-			echo $string;
+			$string .= "</div>";
 
 			// reports if no data in table is found
 		} else {
-			echo "<p>No data in database table</p>";
+			$string = "<div class='error_message'>No data in database table</div>";
 		}
+		
+		echo $string;
 	}
 
 	/**

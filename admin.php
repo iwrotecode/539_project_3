@@ -36,6 +36,8 @@ echo Page::addNav();
 	// echo "$k=$v<br />";
 // }
 
+echo "<h1>Administration</h1>";
+
 echo Utils::displayDBTables();
 
 echo Page::footer();

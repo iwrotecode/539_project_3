@@ -2,7 +2,7 @@
 
 class Page {
 
-	static function header($title = "Untitled", $styles = null, $scripts = null) {
+	static function header($title = "Untitled", $styles = "css/styles.css", $scripts = null) {
 		$string = <<<END
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">

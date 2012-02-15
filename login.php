@@ -75,18 +75,19 @@ if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 
 			} else {
 				//if invalid login credentials, create error message
-				$errors .= "<p>Incorrect username or password.</p>\n";
+				$errors .= "<p>Incorrect username or password</p>\n";
 			}
 
 		} else if($recCount > 1){
 			// more than one record was found
 			$errors .= "<p>There was a database error <span>(more than one person with same username)</span></p>";
 		} else{
-			$errors .= "<p>Username does not exist</p>";
+			// $errors .= "<p>Username does not exist</p>";
+			$errors .= "<p>Incorrect username or password</p>\n";
 		}// if count recs == 1
 	} else {
 		//if missing information, create error message
-		$errors .= "<p>Please enter a username and Password</p>\n";
+		$errors .= "<p>Please enter a username and password</p>\n";
 	} // if credentials are there
 
 }// if submit is correct
@@ -99,45 +100,55 @@ echo Page::addNav();
 
 //display any messages
 
-// display error
-if (!empty($errors)) {
-	echo $errors;
-}
-
-//create and display form
+//create and display form with containing div
+echo '<div class="content">' . "\n";
 echo '<form id="form1" name="form1" method="post" action="login.php">' . "\n";
 
 // start container per input
-echo "\t" . '<div>' . "\n";
+echo "\t" . '<div class="login_form">' . "\n";
 // add label
-echo "\t" . "\t" . '<label for="name">User Name:</label>';
+echo "\t" . "\t" . '<label for="name" class="label">Username:</label>';
 // add input
-echo '<input type="text" name="username" id="name" ';
+echo '<input type="text" name="username" id="name" class="text" ';
 // grab cookie for username
 if (isset($_COOKIE['username']) && !empty($_COOKIE['username'])) {
 	// add the cookie as a default value
 	echo 'value = "' . $_COOKIE['username'] . '"';
 }
 echo '/>' . "\n";
+
+echo '<input type="submit" name="submit" value="Submit" class="button" />';
+
 // close the div
 echo "\t" . '</div>' . "\n";
 
 // start container per input
-echo "\t" . '<div>' . "\n";
+echo "\t" . '<div class="login_form">' . "\n";
 // add label
-echo "\t" . "\t" . '<label for="name">Password:</label>';
+echo "\t" . "\t" . '<label for="password" class="label">Password:</label>';
 // add input
-echo '<input type="password" name="password" id="password" />' . "\n";
+echo '<input type="password" name="password" id="password" class="text" />' . "\n";
+
+echo '<input type="reset" name="reset" value="Reset" class="button" />';
+
 // close the div
 echo "\t" . '</div>' . "\n";
 
 echo <<<END
-	<div>
-		<input type="submit" name="submit" value="Submit" />
-	</div>
-</form>
+	</form>
+</div>
 
 END;
+
+// display error
+if (!empty($errors)) {
+	echo <<<END
+		<div class="error_message">
+			$errors
+		</div>
+
+END;
+}
 
 // end the page
 echo Page::footer();
