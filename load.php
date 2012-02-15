@@ -49,7 +49,7 @@ if (isset($_GET['submit']) && !empty($_GET['submit'])) {
 		if (Utils::arrayContainsVals($_GET, $reqFields)) {
 
 			// start processing of getting table info
-			$errors .= "<p>".processGetTableInfo()."</p>";
+			$errors .= "<p>" . processGetTableInfo() . "</p>";
 
 			$passed = true;
 
@@ -66,7 +66,7 @@ if (isset($_GET['submit']) && !empty($_GET['submit'])) {
 		if (Utils::arrayContainsVals($_SESSION, $reqFields)) {
 
 			// start processing for import
-			$errors .= "<p>".processImport()."</p>";
+			$errors .= "<p>" . processImport() . "</p>";
 
 			// they passed
 			$passed = true;
@@ -128,7 +128,7 @@ function processGetTableInfo() {
 
 function processImport() {
 	$error = "";
-	
+
 	echo "<p>About to import</p>";
 
 	// get all the field names
@@ -139,6 +139,9 @@ function processImport() {
 	$fileName = $_SESSION['fileName'];
 	// get the delimiter
 	$delim = $_SESSION['delimiter'];
+	// grab the has headers
+	$hasHeaderRow = $_SESSION['hasHeaders'];
+	
 
 	if (!empty($fieldNames) && !empty($tableName) && !empty($fileName) && !empty($delim)) {
 		// get the records from the file
@@ -170,14 +173,53 @@ function processImport() {
 		}
 		// close the query
 		$query .= ")";
+		
+		echo "Field names";
+		var_dump($fieldNames);
 
-		echo "Query";
-		var_dump($query);
-	} else{
+		
+		$start = intval($hasHeaderRow);
+		$end = count($records);
+		
+		// start inserting the records
+		for($i = $start; $i<$end; $i++){
+			$record = $records[$i];
+		// foreach ($records as $record) {
+			// setup a data array	
+			$data = array();
+			// setup types array
+			$types = array();			
+			
+			// build the data and types array
+			foreach($fieldNames as $field){
+				// for each field grab the perspective column
+				$col = $fieldAssoc[$field];
+				
+				// make sure the col is not empty and a number
+				if(strlen($col)>0){
+					$col = intval($col);
+					$data[$field] = trim($record[$col]);	
+				} else{
+					// just insert a blank
+					$data[$field] = "";
+				}
+				$types[$field] = "s";
+			}
+			
+			echo "Data";
+			var_dump($data);
+			
+			echo "Types";
+			var_dump($types);
+			
+			// insert into array
+			$db = Database::getInstance();
+			$db->doQuery($query, $data, $types);
+		}
+	} else {
 		$error .= "Something went wrong, missing one or more required fields";
 	}
-		
-	
+
 	return $error;
 }
 
