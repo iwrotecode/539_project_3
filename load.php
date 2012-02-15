@@ -99,8 +99,8 @@ ob_end_flush();
 
 <?php
 
-function importData($tableName, $fileName, $delim, $hasHeaderRow){
-	
+function importData($tableName, $fileName, $delim, $hasHeaderRow) {
+
 }
 
 /**
@@ -114,7 +114,7 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 	$db = Database::getInstance();
 	$fieldNames = $db -> getColNames($tableName);
 	// returns an array
-	
+
 	// use the delim to load the file in a array
 	$lines = Utils::return_file_as_array($fileName);
 
@@ -131,59 +131,59 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 	// use the header row to check if we can
 	$headers = array();
 	$values = array();
-	
+
 	// fill the headers for the select
 	if ($hasHeaderRow) {
-		foreach($records[0] as $headerField){
+		foreach ($records[0] as $headerField) {
 			$headers[] = $headerField;
 		}
 	} else {
 		for ($i = 0; $i < $numColumns; $i++) {
 			// build the headers
 			$headers[] = "col $i";
-			
+
 			// build the values array
 			$values[] = $i;
 		}
 	}
-	
+
 	// fill the values array, since it wasnt done for the headers
 	if ($hasHeaderRow) {
 		for ($i = 0; $i < $numColumns; $i++) {
 			$values[] = $i;
 		}
 	}
-	
+
 	// prepend both arrays with a dummy field
 	array_unshift($headers, "--none--");
 	array_unshift($values, "na");
-	
+
 	// ******************* BUILD THE FORM ***********************
-	
+
 	// build the form
 	$result = "<div class='content'>\n";
 	$result .= "<form method=\"get\">\n";
-	
-	// add a hidden field for the table name and the file name, add if they have a 
+
+	// add a hidden field for the table name and the file name, add if they have a
 	// field header
 	$result .= "<input type='hidden' name='table' value='$tableName' />";
 	$result .= "<input type='hidden' name='filename' value='$fileName' />";
 	$result .= "<input type='hidden' name='delimiter' value='$delim' />";
 	$result .= "<input type='hidden' name='hasheaders' value='$hasHeaderRow' />";
-	
+
 	// build the field select
 	// the name should be the field name, then the value should be the column number
-	foreach($fieldNames as $field){
+	foreach ($fieldNames as $field) {
 		// build the label
-		$result .= "<label for='$field'>$field</label>";	
-					
+		$result .= "<label for='$field'>$field</label>";
+
 		// build the select
 		$result .= Form::buildSelect($values, $field, $headers, null, "fileAssocSelect");
 	}
-	
+
 	$result .= "</form>\n";
 	$result .= "</div>\n";
-	
+
 	return $result;
 }
 
@@ -197,35 +197,37 @@ function addChooseFileForm() {
 
 	// add table select
 	$tables = array("cms_banner", "cms_news", "cms_editorial");
+	$result .= "<div class='login_form'>";
 	$result .= "<label for=\"table\">Table Name: </label>\n";
 	$result .= Form::buildSelect($tables, "table");
-
-	$result .= "<br />\n";
+	$result .= "</div>\n";
 
 	// add the file name select
 	// get the file names in the load data directory
 	$fileNames = Utils::getFileNames(Utils::getLoadFileLoc());
 
+	$result .= "<div class='login_form'>";
 	$result .= "<label for=\"filename\">File Name: </label>\n";
 	// $result .= "<input name=\"filename\" size=\"30\"></input>\n";
 	$result .= Form::buildSelect($fileNames, "filename");
+	$result .= "</div>\n";
 
-	$result .= "<br />\n";
+	
+	// add the header checkbox
+	$result .= "<div class='login_form'>";
+	$result .= "<label for=\"hasheaders\">File contains header row</label>";
+	$result .= "<input type=\"checkbox\" name=\"hasheaders\"/>";
+	$result .= "</div>\n";
+	
 
 	// add the delimiter name
+	$result .= "<div class='login_form'>";
 	$result .= "<label for=\"delimiter\">Delimiter: </label>\n";
-	$result .= "<input name=\"delimiter\" size=\"5\" value=\",\"></input>\n";
-
-	$result .= "<br />\n";
-
-	// add the header checkbox
-	$result .= "<input type=\"checkbox\" name=\"hasheaders\"/>";
-	$result .= "<label for=\"hasheaders\">File has a Header row?</label>";
-
-	$result .= "<br />\n";
-
+	$result .= "<input name=\"delimiter\" size=\"5\" value=\",\" style='width:.5em;'></input>\n";
+	
 	// add the get info submit button
 	$result .= "<input type=\"submit\" name=\"submit\" value=\"$submitFileName\"/>\n";
+	$result .= "</div>\n";
 
 	$result .= "</form>\n";
 	$result .= "</div>\n";
