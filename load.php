@@ -22,7 +22,7 @@ echo Page::header("load.php");
 // add navigation
 echo Page::addNav();
 
-// variables for the submit filename form
+// variables for the submit fileName form
 $submitFileName = "Get Table Info";
 $submitFieldAssoc = "Load Data";
 
@@ -38,7 +38,7 @@ $errors = "";
 // check what to display
 
 // the required fields
-$filenameFormReqFields = array("table", "filename", "delimiter");
+$reqFields = array("tableName", "fileName", "delimiter");
 
 // check to see if the form was submitted
 if (isset($_GET['submit']) && !empty($_GET['submit'])) {
@@ -46,44 +46,31 @@ if (isset($_GET['submit']) && !empty($_GET['submit'])) {
 		// file form was submitted, need to build the file associat
 
 		// check that the required fields were submitted
-		if (Utils::arrayContainsVals($_GET, $filenameFormReqFields)) {
+		if (Utils::arrayContainsVals($_GET, $reqFields)) {
 
-			$tableName = $_GET['table'];
-			$fileName = Utils::getLoadFileLoc() . "/" . $_GET['filename'];
-			$delim = $_GET['delimiter'];
-			$hasHeaderRow = false;
+			// start processing of getting table info
+			$errors .= "<p>".processGetTableInfo()."</p>";
 
-			// checks if they check the checkbox
-			if (Utils::arrayContainsVals($_GET, array("hasheaders")) && $_GET['hasheaders'] == "on") {
-				// if so, then they said it has a header row
-				$hasHeaderRow = true;
-			}
+			$passed = true;
 
-			//check if file exists
-			if (file_exists($fileName)) {
-				$passed = true;
-				// display the associate field form
-				echo addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow);
-			} else {
-				// ERROR
-				$errors .= "<p>File does not exist</p>";
-			}
 		} else {
 			// ERROR: missing one or more required fields
 			$errors .= "<p>Missing one or more required fields</p>";
 		}
 	} else if ($_GET['submit'] == $submitFieldAssoc) {
-		echo "<p>About to import</p>";
+
 		// make sure the required fields were passed
+		// add extra required field
+		$reqFields[] = "fieldnames";
 
-		// do something with association
+		if (Utils::arrayContainsVals($_SESSION, $reqFields)) {
 
-		// setup array for insertions
+			// start processing for import
+			$errors .= "<p>".processImport()."</p>";
 
-		// perform insertions
-
-		// they passed
-		$passed = true;
+			// they passed
+			$passed = true;
+		}
 	}
 }
 
@@ -100,7 +87,7 @@ END;
 
 // if we didnt pass either of the two forms
 if (!$passed) {
-	// display the choose filename form
+	// display the choose fileName form
 	echo addChooseFileForm();
 }
 
@@ -113,8 +100,108 @@ ob_end_flush();
 
 <?php
 
+function processGetTableInfo() {
+	$errors = "";
+	$tableName = $_GET['tableName'];
+	$fileName = Utils::getLoadFileLoc() . "/" . $_GET['fileName'];
+	$delim = $_GET['delimiter'];
+	$hasHeaderRow = false;
+
+	// checks if they check the checkbox
+	if (Utils::arrayContainsVals($_GET, array("hasheaders")) && $_GET['hasheaders'] == "on") {
+		// if so, then they said it has a header row
+		$hasHeaderRow = true;
+	}
+
+	//check if file exists
+	if (file_exists($fileName)) {
+		$passed = true;
+		// display the associate field form
+		echo addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow);
+	} else {
+		// ERROR
+		$errors .= "<p>File does not exist</p>";
+	}
+
+	return $errors;
+}
+
+function processImport() {
+	$error = "";
+	
+	echo "<p>About to import</p>";
+
+	// get all the field names
+	$fieldNames = $_SESSION['fieldnames'];
+	// get the tableaName
+	$tableName = $_SESSION['tableName'];
+	// get the file
+	$fileName = $_SESSION['fileName'];
+	// get the delimiter
+	$delim = $_SESSION['delimiter'];
+
+	if (!empty($fieldNames) && !empty($tableName) && !empty($fileName) && !empty($delim)) {
+		// get the records from the file
+		$records = getRecords($fileName, $delim);
+
+		// grab the field name associations from the GET array
+		$fieldAssoc = array();
+
+		// setup array for insertions
+		foreach ($fieldNames as $field) {
+			$fieldAssoc[$field] = $_GET[$field];
+		}
+
+		// perform insertions
+		// grab the list of fields
+		$fields = implode(",", $fieldNames);
+
+		// build the parameterized query
+		$query = "insert into " . $_SESSION['tableName'] . " ($fields) values(";
+		// make the question marks
+		for ($i = 0, $len = count($fieldNames); $i < $len; $i++) {
+			// add a question mark for the field
+			$query .= "?";
+			// if not the last field
+			if ($i < $len - 1) {
+				// add a comma
+				$query .= ",";
+			}
+		}
+		// close the query
+		$query .= ")";
+
+		echo "Query";
+		var_dump($query);
+	} else{
+		$error .= "Something went wrong, missing one or more required fields";
+	}
+		
+	
+	return $error;
+}
+
 function importData($tableName, $fileName, $delim, $hasHeaderRow) {
 
+}
+
+function getRecords($fileName, $delim) {
+	$records = null;
+
+	// check if fileName is a file, and is readable
+	if (file_exists($fileName) && is_readable($fileName)) {
+		// use the delim to load the file in a array
+		$lines = Utils::return_file_as_array($fileName);
+
+		$records = array();
+		// go thru the lines of the file
+		foreach ($lines as $line) {
+			// for each line, explode it based on the delim and add the array to records
+			$records[] = explode($delim, $line);
+		}
+	}
+
+	return $records;
 }
 
 /**
@@ -130,14 +217,7 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 	// returns an array
 
 	// use the delim to load the file in a array
-	$lines = Utils::return_file_as_array($fileName);
-
-	$records = array();
-	// go thru the lines of the file
-	foreach ($lines as $line) {
-		// for each line, explode it based on the delim and add the array to records
-		$records[] = explode($delim, $line);
-	}
+	$records = getRecords($fileName, $delim);
 
 	// get the number of columns
 	$numColumns = count($records[0]);
@@ -179,6 +259,10 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 	return $result;
 }
 
+/**
+ * Builds the form that allows the user to associate fields to columns in their
+ * data file.
+ */
 function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fieldNames, $headers, $values) {
 	global $submitFieldAssoc;
 	$result = "";
@@ -188,12 +272,12 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	$result = "<div class='content'>\n";
 	$result .= "<form method=\"get\">\n";
 
-	// add a hidden field for the table name and the file name, add if they have a
-	// field header
-	$result .= "<input type='hidden' name='table' value='$tableName' />";
-	$result .= "<input type='hidden' name='filename' value='$fileName' />";
-	$result .= "<input type='hidden' name='delimiter' value='$delim' />";
-	$result .= "<input type='hidden' name='hasheaders' value='$hasHeaderRow' />";
+	// instead of hidden elements, lets build session variables to store essential info
+	$_SESSION['tableName'] = $tableName;
+	$_SESSION['fileName'] = $fileName;
+	$_SESSION['delimiter'] = $delim;
+	$_SESSION['hasHeaders'] = $hasHeaderRow;
+	$_SESSION['fieldnames'] = $fieldNames;
 
 	// build the field select
 	// the name should be the field name, then the value should be the column number
@@ -217,6 +301,10 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	return $result;
 }
 
+/**
+ * creates form that allows users to choose which data file to upload to which table,
+ * as well as what the delimeter is.
+ */
 function addChooseFileForm() {
 	global $submitFileName;
 	$result = "";
@@ -228,8 +316,8 @@ function addChooseFileForm() {
 	// add table select
 	$tables = array("cms_banner", "cms_news", "cms_editorial");
 	$result .= "<div class='login_form'>";
-	$result .= "<label for=\"table\">Table Name: </label>\n";
-	$result .= Form::buildSelect($tables, "table");
+	$result .= "<label for=\"tableName\">Table Name: </label>\n";
+	$result .= Form::buildSelect($tables, "tableName");
 	$result .= "</div>\n";
 
 	// add the file name select
@@ -237,14 +325,13 @@ function addChooseFileForm() {
 	$fileNames = Utils::getFileNames(Utils::getLoadFileLoc());
 
 	$result .= "<div class='login_form'>";
-	$result .= "<label for=\"filename\">File Name: </label>\n";
-	// $result .= "<input name=\"filename\" size=\"30\"></input>\n";
-	$result .= Form::buildSelect($fileNames, "filename");
+	$result .= "<label for=\"fileName\">File Name: </label>\n";
+	$result .= Form::buildSelect($fileNames, "fileName");
 	$result .= "</div>\n";
 
 	// add the header checkbox
 	$result .= "<div class='login_form'>";
-	$result .= "<label for=\"hasheaders\">File contains header row</label>";
+	$result .= "<label for=\"hasHeaders\">File contains header row</label>";
 	$result .= "<input type=\"checkbox\" name=\"hasheaders\"/>";
 	$result .= "</div>\n";
 
