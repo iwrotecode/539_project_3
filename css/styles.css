@@ -1,0 +1,136 @@
+/* START BODY | HTML STYLES */
+body {
+	font-family: arial, san-serif;
+}
+
+a {
+	color: #FFB100;
+	text-decoration: none;
+}
+
+.content {
+	position: absolute;
+	float: left;
+	
+	margin-right: 2em;
+	margin-left: 12em;
+	padding: .25em;
+	
+	border-color: #000000;
+	border-style: solid;
+	border-width: .1em;
+	
+	background-color: #206676;
+
+	box-shadow: 5px 5px 15px #000000;
+	
+	font-size: .8em;
+}
+
+.content_results {
+	margin-top: 6em;
+}
+/* END BODY | HTML STYLES */
+
+/*  START GLOBAL NAVIGATION */
+#nav {
+	position: relative;
+	float: left;
+	margin-right: 2em;
+	
+	border-color: #000000;
+	border-style: solid;
+	border-width: .1em;
+	
+	background-color: #FF5640;
+
+	box-shadow: 5px 5px 15px #000000;
+	
+	font-size: .8em;
+
+}
+
+#nav ul {
+	position: relative;
+	margin: 0 auto;
+}
+
+#nav li {
+	list-style: none;
+	
+	margin: 0 auto;
+	margin-left: -2em;
+	
+	padding: .25em;
+	background-color: #206676;
+}
+
+#nav li:hover {
+	background-color: #FFC540;
+}
+
+#nav li:hover a {
+	color: #FF5640;
+}
+
+/* END GLOBAL NAVIGATION */
+
+/* START LOGIN FORM */
+.login_form {
+	float: right;
+	position: relative;
+	clear: right;
+}
+
+.label {
+	color: #FF5640;
+	font-size: 1.25em;
+}
+
+.text {
+	background-color: #FFC540;
+	color: #206676;
+	font-weight: bold;
+}
+
+.button {
+	width: 5em;
+}
+/* END LOGIN FORM */
+.error_message {
+	position: relative;
+	float: right;
+	
+	padding: .25em;
+	
+	border-color: #000000;
+	border-style: solid;
+	border-width: .1em;
+	
+	background-color: #206676;
+
+	box-shadow: 5px 5px 15px #000000;
+	
+	color: #FF5640;
+	font-size: 1.25em;
+	font-weight: bold;
+	text-align: right;
+}
+
+.error_message p {
+	margin: 0 0;
+}
+
+
+/* START ERROR MESSAGES */
+
+
+/* END ERROR MESSAGES */
+
+
+
+
+
+.fileAssocSelect{
+	width: 10em;
+}

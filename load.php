@@ -17,7 +17,7 @@ if (!Utils::isLoggedIn()) {
 $styles = array("css/load.css");
 
 // start the page
-echo Page::header("load.php", $styles);
+echo Page::header("load.php");
 
 // add navigation
 echo Page::addNav();
@@ -76,7 +76,12 @@ if (isset($_GET['submit']) && !empty($_GET['submit']) && $_GET['submit'] == $sub
 // display errors
 if (!empty($errors)) {
 	// display errors
-	echo $errors;
+	echo <<<END
+		<div class="error_message">
+			$errors
+		</div>
+
+END;
 }
 
 // if we didnt pass either of the two forms
@@ -104,8 +109,6 @@ function importData($tableName, $fileName, $delim, $hasHeaderRow) {
  *
  */
 function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = false) {
-	echo "<p>hey, we made it to associate fields</p>";
-
 	// pull the column names from the table
 	// get database instance
 	$db = Database::getInstance();
@@ -158,9 +161,10 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 	// ******************* BUILD THE FORM ***********************
 
 	// build the form
-	$result = "<form method=\"get\">\n";
-
-	// add a hidden field for the table name and the file name, add if they have a
+	$result = "<div class='content'>\n";
+	$result .= "<form method=\"get\">\n";
+	
+	// add a hidden field for the table name and the file name, add if they have a 
 	// field header
 	$result .= "<input type='hidden' name='table' value='$tableName' />";
 	$result .= "<input type='hidden' name='filename' value='$fileName' />";
@@ -178,7 +182,8 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 	}
 
 	$result .= "</form>\n";
-
+	$result .= "</div>\n";
+	
 	return $result;
 }
 
@@ -187,6 +192,7 @@ function addChooseFileForm() {
 	$result = "";
 
 	// add the first form
+	$result .= "<div class='content'>\n";
 	$result .= "<form method=\"get\" >\n";
 
 	// add table select
@@ -222,6 +228,7 @@ function addChooseFileForm() {
 	$result .= "<input type=\"submit\" name=\"submit\" value=\"$submitFileName\"/>\n";
 
 	$result .= "</form>\n";
+	$result .= "</div>\n";
 
 	return $result;
 }
