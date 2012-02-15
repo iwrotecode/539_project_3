@@ -1,11 +1,17 @@
 /* START BODY | HTML STYLES */
 body {
 	font-family: arial, san-serif;
+	background-color: #60B9CE;
+	color: #38B2CE;
 }
 
 a {
 	color: #FFB100;
 	text-decoration: none;
+}
+
+h1, h2, h3, h4 {
+	color: #000000;
 }
 
 .content {
@@ -83,13 +89,11 @@ a {
 }
 
 .label {
-	color: #FF5640;
+	color: #38B2CE;
 	font-size: 1.25em;
 }
 
 .text {
-	background-color: #FFC540;
-	color: #206676;
 	font-weight: bold;
 }
 

@@ -43,7 +43,7 @@ $filenameFormReqFields = array("table", "filename", "delimiter");
 // check to see if the form was submitted
 if (isset($_GET['submit']) && !empty($_GET['submit'])) {
 	if ($_GET['submit'] == $submitFileName) {
-		// file form was submitted, need to build the file associat 
+		// file form was submitted, need to build the file associat
 
 		// check that the required fields were submitted
 		if (Utils::arrayContainsVals($_GET, $filenameFormReqFields)) {
@@ -73,17 +73,16 @@ if (isset($_GET['submit']) && !empty($_GET['submit'])) {
 			$errors .= "<p>Missing one or more required fields</p>";
 		}
 	} else if ($_GET['submit'] == $submitFieldAssoc) {
-		echo "<p>About to import</p>";	
-			// make sure the required fields were passed
-			
-			// do something with association
-			
-			// setup array for insertions
-			
-			// perform insertions
-			
-			
-		// they passed	
+		echo "<p>About to import</p>";
+		// make sure the required fields were passed
+
+		// do something with association
+
+		// setup array for insertions
+
+		// perform insertions
+
+		// they passed
 		$passed = true;
 	}
 }
@@ -183,6 +182,7 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fieldNames, $headers, $values) {
 	global $submitFieldAssoc;
 	$result = "";
+	// ******************* BUILD THE FORM ***********************
 
 	// build the form
 	$result = "<div class='content'>\n";
@@ -227,38 +227,38 @@ function addChooseFileForm() {
 
 	// add table select
 	$tables = array("cms_banner", "cms_news", "cms_editorial");
+	$result .= "<div class='login_form'>";
 	$result .= "<label for=\"table\">Table Name: </label>\n";
 	$result .= Form::buildSelect($tables, "table");
-
-	$result .= "<br />\n";
+	$result .= "</div>\n";
 
 	// add the file name select
 	// get the file names in the load data directory
 	$fileNames = Utils::getFileNames(Utils::getLoadFileLoc());
 
+	$result .= "<div class='login_form'>";
 	$result .= "<label for=\"filename\">File Name: </label>\n";
 	// $result .= "<input name=\"filename\" size=\"30\"></input>\n";
 	$result .= Form::buildSelect($fileNames, "filename");
-
-	$result .= "<br />\n";
-
-	// add the delimiter name
-	$result .= "<label for=\"delimiter\">Delimiter: </label>\n";
-	$result .= "<input name=\"delimiter\" size=\"5\" value=\",\"></input>\n";
-
-	$result .= "<br />\n";
+	$result .= "</div>\n";
 
 	// add the header checkbox
+	$result .= "<div class='login_form'>";
+	$result .= "<label for=\"hasheaders\">File contains header row</label>";
 	$result .= "<input type=\"checkbox\" name=\"hasheaders\"/>";
-	$result .= "<label for=\"hasheaders\">File has a Header row?</label>";
+	$result .= "</div>\n";
 
-	$result .= "<br />\n";
+	// add the delimiter name
+	$result .= "<div class='login_form'>";
+	$result .= "<label for=\"delimiter\">Delimiter: </label>\n";
+	$result .= "<input name=\"delimiter\" size=\"5\" value=\",\" style='width:.5em;'></input>\n";
 
 	// add the reset button
 	$result .= "<input type='reset' />";
 
 	// add the get info submit button
 	$result .= "<input type=\"submit\" name=\"submit\" value=\"$submitFileName\"/>\n";
+	$result .= "</div>\n";
 
 	$result .= "</form>\n";
 	$result .= "</div>\n";

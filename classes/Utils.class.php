@@ -37,7 +37,7 @@ class Utils {
 	/**
 	 * Sets a cookie based on the passed in values.
 	 *
-	 * Defaults are sepecified in the class as properties
+	 * Defaults are specified in the class as properties
 	 */
 	static function setCookie($name, $value, $expire = null) {
 		// , $path=null, $domain=null, $secure=null){
@@ -174,12 +174,23 @@ class Utils {
 				$string .= "<tr>";
 
 				foreach ($field as $test => $fieldInfo) {
-					$string .= "<td><input type='text' name='$field' value='$fieldInfo'></td>";
+					$string .= "<td><input type='text' name='$field' value='$fieldInfo' readonly></td>";
 				}
 				$string .= "<td><input type='submit' name='deleteDBRecord' value='Delete'/><input type='submit' name='modifyDBRecord' value='Modify'/></td>";
 				$string .= "</tr>";
 			}
 
+			$string .= "<tr>";
+
+			// for ($i = 0; $i < count($field); $i++) {
+				// $string .= "<td></td>";
+			// }
+			
+			foreach ($field as $test => $fieldInfo) {
+				$string .= "<td><input type='text' name='$field' value=''></td>";
+			}	
+			
+			$string .= "<td><input type='submit' name='addDBRecord' value='Add Record' style='width:8.75em; margin:0 auto'/></td></tr>";
 			$string .= "</table>";
 			$string .= "</form>";
 			$string .= "</div>";
@@ -188,7 +199,7 @@ class Utils {
 		} else {
 			$string = "<div class='error_message'>No data in database table</div>";
 		}
-		
+
 		echo $string;
 	}
 
