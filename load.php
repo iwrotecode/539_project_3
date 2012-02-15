@@ -41,35 +41,50 @@ $errors = "";
 $filenameFormReqFields = array("table", "filename", "delimiter");
 
 // check to see if the form was submitted
-if (isset($_GET['submit']) && !empty($_GET['submit']) && $_GET['submit'] == $submitFileName) {
-	// form was submitted
+if (isset($_GET['submit']) && !empty($_GET['submit'])) {
+	if ($_GET['submit'] == $submitFileName) {
+		// file form was submitted, need to build the file associat 
 
-	// check that the required fields were submitted
-	if (Utils::arrayContainsVals($_GET, $filenameFormReqFields)) {
+		// check that the required fields were submitted
+		if (Utils::arrayContainsVals($_GET, $filenameFormReqFields)) {
 
-		$tableName = $_GET['table'];
-		$fileName = Utils::getLoadFileLoc() . "/" . $_GET['filename'];
-		$delim = $_GET['delimiter'];
-		$hasHeaderRow = false;
+			$tableName = $_GET['table'];
+			$fileName = Utils::getLoadFileLoc() . "/" . $_GET['filename'];
+			$delim = $_GET['delimiter'];
+			$hasHeaderRow = false;
 
-		// checks if they check the checkbox
-		if (Utils::arrayContainsVals($_GET, array("hasheaders")) && $_GET['hasheaders'] == "on") {
-			// if so, then they said it has a header row
-			$hasHeaderRow = true;
-		}
+			// checks if they check the checkbox
+			if (Utils::arrayContainsVals($_GET, array("hasheaders")) && $_GET['hasheaders'] == "on") {
+				// if so, then they said it has a header row
+				$hasHeaderRow = true;
+			}
 
-		//check if file exists
-		if (file_exists($fileName)) {
-			$passed = true;
-			// display the associate field form
-			echo addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow);
+			//check if file exists
+			if (file_exists($fileName)) {
+				$passed = true;
+				// display the associate field form
+				echo addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow);
+			} else {
+				// ERROR
+				$errors .= "<p>File does not exist</p>";
+			}
 		} else {
-			// ERROR
-			$errors .= "<p>File does not exist</p>";
+			// ERROR: missing one or more required fields
+			$errors .= "<p>Missing one or more required fields</p>";
 		}
-	} else {
-		// ERROR: missing one or more required fields
-		$errors .= "<p>Missing one or more required fields</p>";
+	} else if ($_GET['submit'] == $submitFieldAssoc) {
+		echo "<p>About to import</p>";	
+			// make sure the required fields were passed
+			
+			// do something with association
+			
+			// setup array for insertions
+			
+			// perform insertions
+			
+			
+		// they passed	
+		$passed = true;
 	}
 }
 
@@ -156,15 +171,24 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 
 	// prepend both arrays with a dummy field
 	array_unshift($headers, "--none--");
-	array_unshift($values, "na");
+	array_unshift($values, "");
 
 	// ******************* BUILD THE FORM ***********************
+	// build the form
+	$result = buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fieldNames, $headers, $values);
+
+	return $result;
+}
+
+function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fieldNames, $headers, $values) {
+	global $submitFieldAssoc;
+	$result = "";
 
 	// build the form
 	$result = "<div class='content'>\n";
 	$result .= "<form method=\"get\">\n";
-	
-	// add a hidden field for the table name and the file name, add if they have a 
+
+	// add a hidden field for the table name and the file name, add if they have a
 	// field header
 	$result .= "<input type='hidden' name='table' value='$tableName' />";
 	$result .= "<input type='hidden' name='filename' value='$fileName' />";
@@ -181,9 +205,15 @@ function addAssociateFieldForm($tableName, $fileName, $delim, $hasHeaderRow = fa
 		$result .= Form::buildSelect($values, $field, $headers, null, "fileAssocSelect");
 	}
 
+	// add the reset button
+	$result .= "<input type='reset' />";
+
+	// add the get info submit button
+	$result .= "<input type=\"submit\" name=\"submit\" value=\"$submitFieldAssoc\"/>\n";
+
 	$result .= "</form>\n";
 	$result .= "</div>\n";
-	
+
 	return $result;
 }
 
@@ -223,6 +253,9 @@ function addChooseFileForm() {
 	$result .= "<label for=\"hasheaders\">File has a Header row?</label>";
 
 	$result .= "<br />\n";
+
+	// add the reset button
+	$result .= "<input type='reset' />";
 
 	// add the get info submit button
 	$result .= "<input type=\"submit\" name=\"submit\" value=\"$submitFileName\"/>\n";
