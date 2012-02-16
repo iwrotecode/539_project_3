@@ -13,6 +13,71 @@ class Utils {
 	// variables for loading data
 	private static $loadFileLoc = "load_data";
 
+	/**
+	 * Tries to get a date time from the passed in string.
+	 * If it cannot, it passes back the current dateTime
+	 */
+	static function getSQLDateTime($date) {
+		// convert to unix time stamp
+		$dt = strtotime($date);
+
+		// change to mySQL format-> YYYY-MM-DD HH:mm:SS
+		$dt = @date("Y-m-d H:i:s", $dt);
+
+		// if date failed, use current time
+		if (!$dt) {
+			$dt = @date("Y-m-d H:i:s", time());
+		}
+
+		return $dt;
+	}
+
+	static function getColNames($conn, $tableName) {
+		$cols_return = array();
+		$cols = mysql_query("SHOW COLUMNS FROM $tableName", $conn);
+		if ($cols) {
+			while ($col = mysql_fetch_assoc($cols)) {
+				$cols_return[] = $col['Field'];
+			}
+		}
+		return $cols_return;
+	}
+
+	static function getColInfo($conn, $tableName) {
+		$cols_return = array();
+		$cols = mysql_query("SHOW COLUMNS FROM $tableName", $conn);
+		if ($cols) {
+			while ($col = mysql_fetch_assoc($cols)) {
+				$cols_return[] = $col;
+			}
+		}
+		return $cols_return;
+	}
+
+	static function fileExists($url) {
+		//use curl to get status code 404 to make sure file exists
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_exec($ch);
+		$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+		//$status_code contains the HTTP status: 200, 404, etc.
+		return $status_code;
+	}
+
+	//use curl for remote fopen when not allowed
+	static function get_contents($url) {
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		// DO NOT RETURN HTTP HEADERS
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		// RETURN THE CONTENTS
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+		$Rec_Data = curl_exec($ch);
+		return $Rec_Data;
+	}
+
 	static function getLoadFileLoc() {
 		return self::$loadFileLoc;
 	}
@@ -100,6 +165,7 @@ class Utils {
 
 		return $result;
 	}
+
 
 	/**
 	 * Make sure that the keys specified exist in the array and its value is not empty
