@@ -130,8 +130,10 @@ function processGetTableInfo() {
 
 function processImport() {
 	$error = "";
+	
+	echo "<div class='content'>";
 
-	echo "<p>About to import</p>";
+	echo "<h1>Results of the Import</h1>";
 
 	// get all the field names
 	$fieldNames = $_SESSION['fieldnames'];
@@ -198,16 +200,17 @@ function processImport() {
 				if(strlen($col)>0){
 					$col = intval($col);
 					
-					echo "Record";
-					var_dump($record);
 					$item = trim($record[$col]);
 					
-					// // change the formatting for pubdate
-					// if($field == "pubdate"){
-						// echo "Field was: $field";
-// 						
-						// // $record = strtotime($record);
-					// }
+					// change the formatting for pubdate
+					if($field == "pubdate"){
+						// convert to unix time stamp
+						$item = strtotime($item);
+						
+						// change to mySQL format-> YYYY-MM-DD HH:mm:SS
+						$item = date("Y-m-d H:i:s", $item);						
+						
+					}
 					
 					$data[$field] = $item;	
 				} else{
@@ -222,9 +225,9 @@ function processImport() {
 			$queryError = $db->doQuery($query, $data, $types);
 			
 			if(empty($queryError)){
-				echo "Record $i was added!";
+				echo "<p>Record $i was added!</p>";
 			} else{
-				echo "Record $i could not be added! Reason: $queryError";
+				echo "<p>Record $i could not be added! Reason: $queryError</p>";
 			}
 			
 			$error .= $queryError;
@@ -233,6 +236,8 @@ function processImport() {
 	} else {
 		$error .= "Something went wrong, missing one or more required fields";
 	}
+	
+	echo "</div>";
 
 	return $error;
 }
@@ -375,7 +380,7 @@ function addChooseFileForm() {
 	$result .= "<form method=\"get\" >\n";
 
 	// add table select
-	$tables = array("cms_banner", "cms_news", "cms_editorial");
+	$tables = array("cms_news", "cms_editorial","cms_banner");
 	$result .= "<div class='login_form'>";
 	$result .= "<label for=\"tableName\">Table Name: </label>\n";
 	$result .= Form::buildSelect($tables, "tableName");
