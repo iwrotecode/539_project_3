@@ -208,15 +208,23 @@ function processImport() {
 						$item = strtotime($item);
 						
 						// change to mySQL format-> YYYY-MM-DD HH:mm:SS
-						$item = date("Y-m-d H:i:s", $item);						
+						$item = @date("Y-m-d H:i:s", $item);
+						
+						// if date failed, use current time
+						if(!$item){
+							$item = @date("Y-m-d H:i:s", time());
+						}						
 						
 					}
 					
 					$data[$field] = $item;	
 				} else{
+					// since the string was empty
 					// just insert a blank
 					$data[$field] = "";
 				}
+				
+				// for now all types are s
 				$types[$field] = "s";
 			}
 			
