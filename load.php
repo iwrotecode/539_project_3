@@ -204,17 +204,7 @@ function processImport() {
 					
 					// change the formatting for pubdate
 					if($field == "pubdate"){
-						// convert to unix time stamp
-						$item = strtotime($item);
-						
-						// change to mySQL format-> YYYY-MM-DD HH:mm:SS
-						$item = @date("Y-m-d H:i:s", $item);
-						
-						// if date failed, use current time
-						if(!$item){
-							$item = @date("Y-m-d H:i:s", time());
-						}						
-						
+						$item = Utils::getSQLDateTime($item);
 					}
 					
 					$data[$field] = $item;	

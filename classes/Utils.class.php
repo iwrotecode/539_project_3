@@ -13,6 +13,25 @@ class Utils {
 	// variables for loading data
 	private static $loadFileLoc = "load_data";
 
+	/**
+	 * Tries to get a date time from the passed in string.
+	 * If it cannot, it passes back the current dateTime
+	 */
+	static function getSQLDateTime($date) {
+		// convert to unix time stamp
+		$dt = strtotime($date);
+
+		// change to mySQL format-> YYYY-MM-DD HH:mm:SS
+		$dt = @date("Y-m-d H:i:s", $dt);
+
+		// if date failed, use current time
+		if (!$dt) {
+			$dt = @date("Y-m-d H:i:s", time());
+		}
+		
+		return $dt;
+	}
+
 	static function getLoadFileLoc() {
 		return self::$loadFileLoc;
 	}
@@ -183,13 +202,13 @@ class Utils {
 			$string .= "<tr>";
 
 			// for ($i = 0; $i < count($field); $i++) {
-				// $string .= "<td></td>";
+			// $string .= "<td></td>";
 			// }
-			
+
 			foreach ($field as $test => $fieldInfo) {
 				$string .= "<td><input type='text' name='$field' value=''></td>";
-			}	
-			
+			}
+
 			$string .= "<td><input type='submit' name='addDBRecord' value='Add Record' style='width:8.75em; margin:0 auto'/></td></tr>";
 			$string .= "</table>";
 			$string .= "</form>";
