@@ -28,8 +28,54 @@ class Utils {
 		if (!$dt) {
 			$dt = @date("Y-m-d H:i:s", time());
 		}
-		
+
 		return $dt;
+	}
+
+	static function getColNames($conn, $tableName) {
+		$cols_return = array();
+		$cols = mysql_query("SHOW COLUMNS FROM $tableName", $conn);
+		if ($cols) {
+			while ($col = mysql_fetch_assoc($cols)) {
+				$cols_return[] = $col['Field'];
+			}
+		}
+		return $cols_return;
+	}
+
+	static function getColInfo($conn, $tableName) {
+		$cols_return = array();
+		$cols = mysql_query("SHOW COLUMNS FROM $tableName", $conn);
+		if ($cols) {
+			while ($col = mysql_fetch_assoc($cols)) {
+				$cols_return[] = $col;
+			}
+		}
+		return $cols_return;
+	}
+
+	static function fileExists($url) {
+		//use curl to get status code 404 to make sure file exists
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_exec($ch);
+		$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+		//$status_code contains the HTTP status: 200, 404, etc.
+		return $status_code;
+	}
+
+	//use curl for remote fopen when not allowed
+	static function get_contents($url) {
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		// DO NOT RETURN HTTP HEADERS
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		// RETURN THE CONTENTS
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+		$Rec_Data = curl_exec($ch);
+		return $Rec_Data;
 	}
 
 	static function getLoadFileLoc() {
