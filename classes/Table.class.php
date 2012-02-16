@@ -98,7 +98,7 @@ class Table {
 				$string .= "</form>";
 				$string .= "</div>";
 			}
-			
+
 			// loops through database table for blank field & configures 2nd form for data input
 			$string .= "<div class='tr'>";
 			$string .= "<form action='admin.php?database_table=$tableName' method='post'>";
@@ -124,29 +124,28 @@ class Table {
 	static function deleteDBTableRecord($results, $tableName) {
 		// initializes sql statement
 		$sql = "DELETE FROM $tableName WHERE ";
-		
+
 		// initializes counter for AND sql statement variable
 		$i = 1;
 
 		// removes the submit value from post array
-		$fields = $_POST;	
+		$fields = $_POST;
 		array_pop($fields);
-		
+
 		// loops through the post array to create sql statement
 		foreach ($fields as $field => $value) {
-			$sql .= "$field='$value'";
-			
-			if ($i < count($fields)) {
-				$sql .= " AND ";
+			if ($i < 2) {
+				$sql .= "$field='$value'";
+
+				$i++;
 			}
-			
-			$i++;
+
 		}
-		
+
 		// runs generated sql statement
 		$db = Database::getInstance();
-		$err = $db->doQuery($sql);
-		
+		$err = $db -> doQuery($sql);
+
 		// refreshes page to show item was deleted
 		header("Location: admin.php?database_table=$tableName");
 	}
