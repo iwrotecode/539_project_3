@@ -35,10 +35,13 @@ echo Page::addNav();
 // foreach ($_COOKIE as $k => $v) {
 	// echo "$k=$v<br />";
 // }
+echo "<div id='content_container'>";
 
 echo "<h1>Administration</h1>";
 
 echo Utils::displayDBTables();
+
+echo "</div>";
 
 echo Page::footer();
 

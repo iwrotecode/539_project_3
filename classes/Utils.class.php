@@ -103,11 +103,6 @@ class Utils {
 
 	// grabs all tables in the DB, and returns a form to select them
 	static function displayDBTables() {
-		if (isset($_POST['selectDatabaseTable'])) {
-			$tableName = $_POST['database_table'];
-			self::generateEditTableSQL($tableName);
-		}
-
 		// grab all tables
 		$db = Database::getInstance();
 		$tableNames = $db -> getValidTableNames();
@@ -128,7 +123,12 @@ class Utils {
 		$string .= '</form>';
 		$string .= "</div>";
 
-		return $string;
+		echo $string;
+
+		if (isset($_POST['selectDatabaseTable'])) {
+			$tableName = $_POST['database_table'];
+			self::generateEditTableSQL($tableName);
+		}
 	}
 
 	// runs the select all query on passed database table
@@ -153,9 +153,9 @@ class Utils {
 		// checks to see if database table has content
 		if (!empty($results)) {
 			// starts html table
-			$string = "<div class='content content_results'>";
+			$string = "<div class='content_results'>";
 			$string .= "<form name='edit_database_table' action='admin.php' method='post'>";
-			$string .= "<table border='1'>";
+			$string .= "<table>";
 			$string .= "<tr>";
 
 			// creates header for html table
@@ -183,13 +183,13 @@ class Utils {
 			$string .= "<tr>";
 
 			// for ($i = 0; $i < count($field); $i++) {
-				// $string .= "<td></td>";
+			// $string .= "<td></td>";
 			// }
-			
+
 			foreach ($field as $test => $fieldInfo) {
 				$string .= "<td><input type='text' name='$field' value=''></td>";
-			}	
-			
+			}
+
 			$string .= "<td><input type='submit' name='addDBRecord' value='Add Record' style='width:8.75em; margin:0 auto'/></td></tr>";
 			$string .= "</table>";
 			$string .= "</form>";
