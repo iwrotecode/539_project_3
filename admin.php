@@ -39,7 +39,7 @@ echo "<div id='content_container'>";
 
 echo "<h1>Administration</h1>";
 
-echo Utils::displayDBTables();
+echo Table::displayDBTables();
 
 echo "</div>";
 

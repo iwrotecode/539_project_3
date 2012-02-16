@@ -17,7 +17,7 @@ h1, h2, h3, h4 {
 #content_container {
 	position: absolute;
 	float: left;
-	margin-left: 10em;
+	min-width: 70em;
 }
 
 .content {
@@ -63,9 +63,9 @@ h1, h2, h3, h4 {
 /*  START GLOBAL NAVIGATION */
 #nav {
 	position: relative;
-	float: left;
+	float: right;
 	margin-right: 2em;
-	margin-top: 6.25em;
+	margin-top: 2em;
 	
 	border-color: #000000;
 	border-style: solid;
@@ -76,7 +76,8 @@ h1, h2, h3, h4 {
 	box-shadow: 5px 5px 15px #000000;
 	
 	font-size: .8em;
-
+	
+	z-index: 100;
 }
 
 #nav ul {
@@ -109,6 +110,7 @@ h1, h2, h3, h4 {
 	float: right;
 	position: relative;
 	clear: right;
+	padding: .25em;
 }
 
 .label {
@@ -155,10 +157,35 @@ h1, h2, h3, h4 {
 /* END ERROR MESSAGES */
 
 /* START TABLE */
-th {
-	font-weight: bold;
-	font-size: 1.25em;
-	text-transform: uppercase;
+.table {
+	margin: 0 0;
+	padding: 0 0;
+	float: right;
+	position: relative;
+	border-right: 5px solid #FFC540;
+}
+
+.th {
+	padding: .25em;
+	width: 12em;
+	
+	float: left;
+	text-align: center;
+	position: relative;
+}
+
+.td {
+	padding: .25em;
+	width: 12em;
+	float: left;
+	text-align: center;	
+	position: relative;
+}
+
+.tr {
+	clear: both;
+	float: right;
+	position: relative;
 }
 /* END TABLE */
 
