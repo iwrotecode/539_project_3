@@ -63,7 +63,7 @@ class Table {
 
 		// checks if add record was sent
 		if (isset($_POST['addDBTableRecord'])) {
-			// self::addDBTableRecord($results, $tableName);
+			self::addDBTableRecord($results, $tableName);
 		}
 
 		// checks to see if database table has content
@@ -147,6 +147,51 @@ class Table {
 		$err = $db -> doQuery($sql);
 
 		// refreshes page to show item was deleted
+		header("Location: admin.php?database_table=$tableName");
+	}
+
+	// adds a DB Table record
+	static function addDBTableRecord($results, $tableName) {
+		// initializes sql statement
+		$sql = "INSERT INTO $tableName ";
+		$sql .= "VALUES (";
+
+		// removes the submit value from post array
+		$fields = $_POST;
+		array_pop($fields);
+
+		// gets the number of fields
+		$number_of_fields = count($fields);
+
+		for ($x = 0; $x < $number_of_fields; $x++) {
+			if (($number_of_fields - $x) > 1) {
+				$sql .= "?, ";
+			}
+			if (($number_of_fields - $x) == 1) {
+				$sql .= "?";
+			}
+		}
+
+		$sql .= ")";
+
+		echo $sql;
+
+		// initializes vars & types array
+		$vars = array();
+		$types = array();
+
+		// loops through the post array to create vars array
+		// TODO: need to call a field validation function here
+		foreach ($fields as $field => $value) {
+			$vars[] = $value;
+			$types[] = substr(gettype($value), 0, 1);
+		}
+
+		// runs generated sql statement
+		$db = Database::getInstance();
+		$err = $db -> doQuery($sql, $vars, $types);
+
+		// refreshes page to show item was added
 		header("Location: admin.php?database_table=$tableName");
 	}
 
