@@ -58,7 +58,7 @@ class Table {
 
 		// checks if modify was sent
 		if (isset($_POST['modifyDBTableRecord'])) {
-			// self::modifyDBTableRecord($results, $tableName);
+			self::modifyDBTableRecord($results, $tableName);
 		}
 
 		// checks if add record was sent
@@ -90,7 +90,7 @@ class Table {
 				$string .= "<form action='admin.php?database_table=$tableName' method='post'>";
 
 				foreach ($field as $fieldType => $fieldInfo) {
-					$string .= "<div class='td'><input type='text' name='$fieldType' value='$fieldInfo' readonly></div>";
+					$string .= "<div class='td'><input type='text' name='$fieldType' value='$fieldInfo' /></div>";
 
 				}
 
@@ -150,6 +150,79 @@ class Table {
 		header("Location: admin.php?database_table=$tableName");
 	}
 
+	// updates a DB Table record
+	static function modifyDBTableRecord($results, $tableName) {
+		// initializes sql statement
+		$sql = "UPDATE $tableName ";
+
+		// initializes counters
+		$x = 1;
+		$i = 1;
+
+		// removes the submit value from post array
+		$fields = $_POST;
+		array_pop($fields);
+
+		// gets the number of fields
+		$number_of_fields = count($fields);
+
+		$sql .= "SET ";
+
+		// loops to create the values placeholder
+		foreach ($fields as $field => $value) {
+			if (($number_of_fields - $x) < 1) {
+				$sql .= "$field = ? ";
+			}
+			if ((($number_of_fields - $x) >= 1) && ($x != 1)) {
+				$sql .= "$field = ?, ";
+			}
+
+			$x++;
+		}
+
+		$sql .= "WHERE ";
+
+		// loops through the post array to create sql statement
+		foreach ($fields as $field => $value) {
+			if ($i < 2) {
+				$sql .= "$field = $value ";
+
+				$i++;
+			}
+
+		}
+
+		// initializes vars & types array
+		$vars = array();
+		$types = array();
+
+		// resets x counter
+		$x = 1;
+
+		// loops through the post array to create vars array
+		// TODO: need to call a field validation function here
+		foreach ($fields as $field => $value) {
+			if (($number_of_fields - $x) < 1) {
+				$vars[] = $value;
+				$types[] = substr(gettype($value), 0, 1);
+			}
+			if ((($number_of_fields - $x) >= 1) && ($x != 1)) {
+				$vars[] = $value;
+				$types[] = substr(gettype($value), 0, 1);
+			}
+
+			$x++;
+
+		}
+
+		// runs generated sql statement
+		$db = Database::getInstance();
+		$err = $db -> doQuery($sql, $vars, $types);
+
+		// refreshes page to show item was added
+		header("Location: admin.php?database_table=$tableName");
+	}
+
 	// adds a DB Table record
 	static function addDBTableRecord($results, $tableName) {
 		// initializes sql statement
@@ -163,6 +236,7 @@ class Table {
 		// gets the number of fields
 		$number_of_fields = count($fields);
 
+		// loops to create the values placeholder
 		for ($x = 0; $x < $number_of_fields; $x++) {
 			if (($number_of_fields - $x) > 1) {
 				$sql .= "?, ";
@@ -173,8 +247,6 @@ class Table {
 		}
 
 		$sql .= ")";
-
-		echo $sql;
 
 		// initializes vars & types array
 		$vars = array();
