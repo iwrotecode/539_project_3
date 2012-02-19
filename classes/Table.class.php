@@ -59,7 +59,9 @@ class Table {
 		if (isset($_GET['count'])) {
 			// validates custom countPerPage
 			if (is_numeric($_GET['count'])) {
-				$countPerPage = $_GET['count'];
+				if ($_GET['count'] > 0) {
+					$countPerPage = ceil($_GET['count']);
+				} 
 			}
 		}
 
@@ -77,7 +79,7 @@ class Table {
 				} else if ($_GET['page'] < 1) {
 
 				} else {
-					$page = $_GET['page'];
+					$page = ceil($_GET['page']);
 				}
 			}
 		}
