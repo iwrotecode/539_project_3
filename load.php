@@ -187,8 +187,9 @@ function processImport() {
 		$db = Database::getInstance();
 
 		$colInfo = $db -> getColInfo($tableName);
-
-		var_dump($colInfo);
+		
+		// TODO: Delete test
+		// var_dump($colInfo);
 
 		// start inserting the records
 		for ($i = $start; $i < $end; $i++) {
@@ -223,9 +224,11 @@ function processImport() {
 					$data[$field] = "";
 				}
 
-				// for now all types are s
-				$types[$field] = "s";
+				// get the type
+				$types[$field] = Form::getParamType($colInfo[$field]['Type']);
+				
 			}
+			
 
 			// insert into array
 			// $db = Database::getInstance();
@@ -338,6 +341,9 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 
 	// build the form
 	$result = "<div class='content_results' >\n";
+	// add a header
+	$result .= "<h2>Import ".basename($fileName)." to $tableName</h2>";
+	
 	$result .= "<form method=\"get\">\n";
 
 	// instead of hidden elements, lets build session variables to store essential info
