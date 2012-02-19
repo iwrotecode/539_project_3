@@ -28,25 +28,35 @@ class Table {
 
 		if (isset($_GET['database_table'])) {
 			$tableName = $_GET['database_table'];
-			self::generateEditTableSQL($tableName);
+			$sql = "SELECT * FROM $tableName";
+
+			self::executeSQL($sql, $tableName);
 		}
 	}
 
 	// runs the select all query on passed database table
-	static function generateEditTableSQL($tableName) {
+	static function executeSQL($sql = "", $tableName = "", $vars = "", $types = "") {
 		$db = Database::getInstance();
 
-		// initializes query
-		$sql = "SELECT * FROM $tableName";
-
 		// executes query
-		$err = $db -> doQuery($sql);
+		if (isset($vars) && is_array($vars) && isset($types) && is_array($types)) {
+			$err = $db -> doQuery($sql, $vars, $types);
+		} else {
+			$err = $db -> doQuery($sql);
+		}
 
 		// grabs results of query
 		$results = $db -> fetch_all_array();
 
-		// calls function to display results in a table
-		self::displayDBTableForm($results, $tableName);
+		// checks if xml or table/form should be displayed
+		if (isset($tableName) && (strlen($tableName) > 1)) {
+			// calls function to display results in a table
+			self::displayDBTableForm($results, $tableName);
+		} else {
+			// calls funtion to display results in XML
+			self::displayNewsXML($results);
+		}
+
 	}
 
 	// formats database table output into a table
@@ -265,6 +275,28 @@ class Table {
 
 		// refreshes page to show item was added
 		header("Location: admin.php?database_table=$tableName");
+	}
+
+	// displays paginated news results in xml form
+	static function getNews($page = 1, $countPerPage = 5) {
+		// initializes sql query and unused tableName variable
+		$tableName = "";
+		$sql = "SELECT * FROM cms_news ORDER BY pubDate DESC LIMIT ?, ?";
+
+		// calculates page offset
+		$offset = ($page - 1) * $countPerPage;
+
+		// stores variables in array for sql query
+		$vars = array($offset, $countPerPage);
+		$types = array("i", "i");
+
+		// calls function to execute sql
+		self::executeSQL($sql, $tableName, $vars, $types);
+	}
+
+	// displays XML feed
+	static function displayNewsXML($results) {
+		var_dump($results);
 	}
 
 }
