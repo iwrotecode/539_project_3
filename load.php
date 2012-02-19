@@ -57,7 +57,7 @@ if (isset($_GET['submit']) && !empty($_GET['submit'])) {
 
 			// start processing of getting table info
 			$result = processGetTableInfo();
-			$errors .= (!empty($result)? "<p>" . processGetTableInfo() . "</p>": "");
+			$errors .= (!empty($result) ? "<p>" . processGetTableInfo() . "</p>" : "");
 
 			// $passed = true;
 
@@ -75,7 +75,7 @@ if (isset($_GET['submit']) && !empty($_GET['submit'])) {
 
 			// start processing for import
 			$result = processImport();
-			$errors .= (!empty($result)? "<p>" . processGetTableInfo() . "</p>": "");
+			$errors .= (!empty($result) ? "<p>" . processGetTableInfo() . "</p>" : "");
 
 			// they passed
 			$passed = true;
@@ -103,8 +103,6 @@ echo Page::footer();
 // flush out the output
 ob_end_flush();
 ?>
-
-
 
 <?php
 
@@ -136,7 +134,7 @@ function processGetTableInfo() {
 
 function processImport() {
 	$error = "";
-	
+
 	echo "<div class='content'>";
 
 	// get all the field names
@@ -149,7 +147,7 @@ function processImport() {
 	$delim = $_SESSION['delimiter'];
 	// grab the has headers
 	$hasHeaderRow = $_SESSION['hasHeaders'];
-	
+
 	echo "<h1>Results of Import to $tableName</h1>";
 
 	if (!empty($fieldNames) && !empty($tableName) && !empty($fileName) && !empty($delim)) {
@@ -182,70 +180,70 @@ function processImport() {
 		}
 		// close the query
 		$query .= ")";
-		
+
 		$start = intval($hasHeaderRow);
 		$end = count($records);
-		
+
 		$db = Database::getInstance();
-		
-		$colInfo = $db->getColInfo($tableName);
-		
+
+		$colInfo = $db -> getColInfo($tableName);
+
 		var_dump($colInfo);
-		
+
 		// start inserting the records
-		for($i = $start; $i<$end; $i++){
+		for ($i = $start; $i < $end; $i++) {
 			// grab a record, which is an array of the columns from a single line
 			$record = $records[$i];
 
-			// setup a data array	
+			// setup a data array
 			$data = array();
 			// setup types array
-			$types = array();			
-			
+			$types = array();
+
 			// build the data and types array
-			foreach($fieldNames as $field){
+			foreach ($fieldNames as $field) {
 				// for each field grab the perspective column
 				$col = $fieldAssoc[$field];
-				
+
 				// make sure the col is not empty and a number
-				if($field != "pubdate" && strlen($col)>0){
+				if ($field != "pubdate" && strlen($col) > 0) {
 					$col = intval($col);
-					
+
 					$item = trim($record[$col]);
-					
+
 					// change the formatting for pubdate
-					if($field == "pubdate"){
+					if ($field == "pubdate") {
 						$item = SQLConvertor::getSQLDateTime($item);
 					}
-					
-					$data[$field] = $item;	
-				} else{
+
+					$data[$field] = $item;
+				} else {
 					// since the string was empty
 					// just insert a blank
 					$data[$field] = "";
 				}
-				
+
 				// for now all types are s
 				$types[$field] = "s";
 			}
-			
+
 			// insert into array
 			// $db = Database::getInstance();
 			// $queryError = $db->doQuery($query, $data, $types);
-			
-			if(empty($queryError)){
+
+			if (empty($queryError)) {
 				echo "<p>Record $i was added!</p>";
-			} else{
+			} else {
 				echo "<p>Record $i could not be added! Reason: $queryError</p>";
 			}
-			
+
 			// $error .= $queryError;
-			
+
 		}
 	} else {
 		$error .= "Something went wrong, missing one or more required fields";
 	}
-	
+
 	echo "</div>";
 
 	return $error;
@@ -354,13 +352,13 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	foreach ($fieldNames as $field) {
 		// enclose in container
 		$result .= "<div class='form_field_rfloat'>";
-		
+
 		// build the label
 		$result .= "<label for='$field'>$field</label>";
 
 		// build the select
 		$result .= Form::buildSelect($values, $field, $headers, null, "fileAssocSelect");
-		
+
 		$result .= "</div>";
 	}
 
@@ -370,7 +368,7 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 
 	// add the get info submit button
 	$result .= "<input type=\"submit\" name=\"submit\" value=\"$submitFieldAssoc\"/>\n";
-	
+
 	$result .= "</div>\n";
 	$result .= "</form>\n";
 	$result .= "</div>\n";
