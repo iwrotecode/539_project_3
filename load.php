@@ -139,8 +139,6 @@ function processImport() {
 	
 	echo "<div class='content'>";
 
-	echo "<h1>Results of the Import</h1>";
-
 	// get all the field names
 	$fieldNames = $_SESSION['fieldnames'];
 	// get the tableaName
@@ -152,6 +150,7 @@ function processImport() {
 	// grab the has headers
 	$hasHeaderRow = $_SESSION['hasHeaders'];
 	
+	echo "<h1>Results of Import to $tableName</h1>";
 
 	if (!empty($fieldNames) && !empty($tableName) && !empty($fileName) && !empty($delim)) {
 		// get the records from the file
@@ -187,6 +186,12 @@ function processImport() {
 		$start = intval($hasHeaderRow);
 		$end = count($records);
 		
+		$db = Database::getInstance();
+		
+		$colInfo = $db->getColInfo($tableName);
+		
+		var_dump($colInfo);
+		
 		// start inserting the records
 		for($i = $start; $i<$end; $i++){
 			// grab a record, which is an array of the columns from a single line
@@ -203,14 +208,14 @@ function processImport() {
 				$col = $fieldAssoc[$field];
 				
 				// make sure the col is not empty and a number
-				if(strlen($col)>0){
+				if($field != "pubdate" && strlen($col)>0){
 					$col = intval($col);
 					
 					$item = trim($record[$col]);
 					
 					// change the formatting for pubdate
 					if($field == "pubdate"){
-						$item = Utils::getSQLDateTime($item);
+						$item = SQLConvertor::getSQLDateTime($item);
 					}
 					
 					$data[$field] = $item;	
@@ -225,8 +230,8 @@ function processImport() {
 			}
 			
 			// insert into array
-			$db = Database::getInstance();
-			$queryError = $db->doQuery($query, $data, $types);
+			// $db = Database::getInstance();
+			// $queryError = $db->doQuery($query, $data, $types);
 			
 			if(empty($queryError)){
 				echo "<p>Record $i was added!</p>";
@@ -234,7 +239,7 @@ function processImport() {
 				echo "<p>Record $i could not be added! Reason: $queryError</p>";
 			}
 			
-			$error .= $queryError;
+			// $error .= $queryError;
 			
 		}
 	} else {
@@ -425,6 +430,4 @@ function addChooseFileForm() {
 
 	return $result;
 }
-
 ?>
-
