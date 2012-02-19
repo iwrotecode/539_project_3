@@ -17,7 +17,7 @@ function __autoload($className) {
 header('Content-type: text/xml');
 
 // calls function to display news XML
-echo Table::displayXML("SELECT * FROM cms_news ORDER BY pubDate DESC LIMIT ?, ?", "cms_news");
+echo Table::displayXML("SELECT * FROM cms_ads WHERE approved = 1 ORDER BY pubdate DESC LIMIT ?, ?", "cms_ads");
 
 ob_end_flush();
 ?>
