@@ -133,8 +133,6 @@ function processImport() {
 	
 	echo "<div class='content'>";
 
-	echo "<h1>Results of the Import</h1>";
-
 	// get all the field names
 	$fieldNames = $_SESSION['fieldnames'];
 	// get the tableaName
@@ -146,6 +144,7 @@ function processImport() {
 	// grab the has headers
 	$hasHeaderRow = $_SESSION['hasHeaders'];
 	
+	echo "<h1>Results of Import to $tableName</h1>";
 
 	if (!empty($fieldNames) && !empty($tableName) && !empty($fileName) && !empty($delim)) {
 		// get the records from the file
@@ -423,4 +422,3 @@ function addChooseFileForm() {
 	return $result;
 }
 ?>
-
