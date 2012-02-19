@@ -30,12 +30,14 @@ class Table {
 			$tableName = $_GET['database_table'];
 			$sql = "SELECT * FROM $tableName";
 
-			self::executeSQL($sql, $tableName);
+			$results = self::executeSQL($sql);
+
+			self::displayDBTableForm($results, $tableName);
 		}
 	}
 
 	// runs the select all query on passed database table
-	static function executeSQL($sql = "", $tableName = "", $vars = "", $types = "") {
+	static function executeSQL($sql = "", $vars = "", $types = "") {
 		$db = Database::getInstance();
 
 		// executes query
@@ -48,15 +50,71 @@ class Table {
 		// grabs results of query
 		$results = $db -> fetch_all_array();
 
-		// checks if xml or table/form should be displayed
-		if (isset($tableName) && (strlen($tableName) > 1)) {
-			// calls function to display results in a table
-			self::displayDBTableForm($results, $tableName);
-		} else {
-			// calls funtion to display results in XML
-			self::displayNewsXML($results);
+		return $results;
+	}
+
+	// displays paginated results in xml form
+	static function displayXML($sql = "", $tableName = "", $page = 1, $countPerPage = 5) {
+		// checks if custom countPerPage is set via GET
+		if (isset($_GET['count'])) {
+			// validates custom countPerPage
+			if (is_numeric($_GET['count'])) {
+				$countPerPage = $_GET['count'];
+			}
 		}
 
+		// calculates total pages
+		$total_items_array = self::executeSQL("SELECT COUNT( id ) AS total_items FROM $tableName", $tableName);
+		$total_items = array_pop(array_pop($total_items_array));
+		$total_pages = ceil($total_items / $countPerPage);
+
+		// checks if custom pageNumber is set via GET
+		if (isset($_GET['page'])) {
+			// validates custom pageNumber
+			if (is_numeric($_GET['page'])) {
+				if ($_GET['page'] > $total_pages) {
+					$page = $total_pages;
+				} else if ($_GET['page'] < 1) {
+
+				} else {
+					$page = $_GET['page'];
+				}
+			}
+		}
+
+		// calculates page offset
+		$offset = ($page - 1) * $countPerPage;
+
+		// stores variables in array for sql query
+		$vars = array($offset, $countPerPage);
+		$types = array("i", "i");
+
+		// calls function to execute sql
+		$results = self::executeSQL($sql, $vars, $types);
+
+		// initializes xml file
+		$string = "<?xml version='1.0'?>\n";
+		$string .= "<page pageNumber='$page' totalPages='$total_pages' numberPerPage='$countPerPage'>\n";
+
+		// loops through results, creating xml output
+		foreach ($results as $column => $field) {
+			$string .= "\t<item>\n";
+
+			// continues the loop, detects if fieldType is content, then use cdata
+			foreach ($field as $fieldType => $fieldInfo) {
+				if ($fieldType == 'content') {
+					$string .= "\t\t<$fieldType><![CDATA[$fieldInfo]]></$fieldType>\n";
+				} else {
+					$string .= "\t\t<$fieldType>$fieldInfo</$fieldType>\n";
+				}
+			}
+
+			$string .= "\t</item>\n";
+		}
+
+		$string .= "</page>\n";
+
+		echo $string;
 	}
 
 	// formats database table output into a table
@@ -275,28 +333,6 @@ class Table {
 
 		// refreshes page to show item was added
 		header("Location: admin.php?database_table=$tableName");
-	}
-
-	// displays paginated news results in xml form
-	static function getNews($page = 1, $countPerPage = 5) {
-		// initializes sql query and unused tableName variable
-		$tableName = "";
-		$sql = "SELECT * FROM cms_news ORDER BY pubDate DESC LIMIT ?, ?";
-
-		// calculates page offset
-		$offset = ($page - 1) * $countPerPage;
-
-		// stores variables in array for sql query
-		$vars = array($offset, $countPerPage);
-		$types = array("i", "i");
-
-		// calls function to execute sql
-		self::executeSQL($sql, $tableName, $vars, $types);
-	}
-
-	// displays XML feed
-	static function displayNewsXML($results) {
-		var_dump($results);
 	}
 
 }
