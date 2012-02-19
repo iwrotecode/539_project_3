@@ -14,13 +14,18 @@ h1, h2, h3, h4 {
 	color: #000000;
 }
 
-.content {
+#content_container {
 	position: absolute;
 	float: left;
-	
+	min-width: 70em;
+}
+
+.content {
+	position: relative;
+	float: left;
+
 	margin-right: 2em;
-	margin-left: 12em;
-	padding: .25em;
+	padding: .75em;
 	
 	border-color: #000000;
 	border-style: solid;
@@ -34,15 +39,33 @@ h1, h2, h3, h4 {
 }
 
 .content_results {
-	margin-top: 6em;
+	position: relative;
+	float: left;
+	clear: left;
+	
+	margin-right: 2em;
+	margin-top: 2em;
+
+	padding: .75em;
+	
+	border-color: #000000;
+	border-style: solid;
+	border-width: .1em;
+	
+	background-color: #206676;
+
+	box-shadow: 5px 5px 15px #000000;
+	
+	font-size: .8em;
 }
 /* END BODY | HTML STYLES */
 
 /*  START GLOBAL NAVIGATION */
 #nav {
 	position: relative;
-	float: left;
+	float: right;
 	margin-right: 2em;
+	margin-top: 2em;
 	
 	border-color: #000000;
 	border-style: solid;
@@ -53,7 +76,8 @@ h1, h2, h3, h4 {
 	box-shadow: 5px 5px 15px #000000;
 	
 	font-size: .8em;
-
+	
+	z-index: 100;
 }
 
 #nav ul {
@@ -81,11 +105,12 @@ h1, h2, h3, h4 {
 
 /* END GLOBAL NAVIGATION */
 
-/* START LOGIN FORM */
-.login_form {
+/* START FORM */
+.form_field_rfloat {
 	float: right;
 	position: relative;
 	clear: right;
+	padding: .25em;
 }
 
 .label {
@@ -100,10 +125,16 @@ h1, h2, h3, h4 {
 .button {
 	width: 5em;
 }
-/* END LOGIN FORM */
+/* END FORM */
+
+/* START ERROR MESSAGES */
 .error_message {
 	position: relative;
-	float: right;
+	float: left;
+	clear: left;
+	
+	margin-right: 2em;
+	margin-top: 1em;
 	
 	padding: .25em;
 	
@@ -118,18 +149,45 @@ h1, h2, h3, h4 {
 	color: #FF5640;
 	font-size: 1.25em;
 	font-weight: bold;
-	text-align: right;
 }
 
 .error_message p {
 	margin: 0 0;
 }
-
-
-/* START ERROR MESSAGES */
-
-
 /* END ERROR MESSAGES */
+
+/* START TABLE */
+.table {
+	margin: 0 0;
+	padding: 0 0;
+	float: right;
+	position: relative;
+	border-right: 5px solid #FFC540;
+}
+
+.th {
+	padding: .25em;
+	width: 12em;
+	
+	float: left;
+	text-align: center;
+	position: relative;
+}
+
+.td {
+	padding: .25em;
+	width: 12em;
+	float: left;
+	text-align: center;	
+	position: relative;
+}
+
+.tr {
+	clear: both;
+	float: right;
+	position: relative;
+}
+/* END TABLE */
 
 
 

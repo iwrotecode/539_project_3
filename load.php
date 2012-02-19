@@ -14,7 +14,7 @@ if (!Utils::isLoggedIn()) {
 	header("Location: login.php");
 }
 
-$styles = array("css/load.css");
+$styles = array("css/styles.css");
 
 // start the page
 echo Page::header("load.php");
@@ -22,9 +22,12 @@ echo Page::header("load.php");
 // add navigation
 echo Page::addNav();
 
+// add content container div
+echo "<div id='content_container'>";
+
 // variables for the submit fileName form
-$submitFileName = "Get Table Info";
-$submitFieldAssoc = "Load Data";
+$submitFileName = "Initialize table";
+$submitFieldAssoc = "Import data";
 
 // add content
 // display a title for the page
@@ -35,7 +38,11 @@ $passed = FALSE;
 // error strings
 $errors = "";
 
-// check what to display
+// if we didnt pass either of the two forms
+if (!$passed) {
+	// display the choose fileName form
+	echo addChooseFileForm();
+}
 
 // the required fields
 $reqFields = array("tableName", "fileName", "delimiter");
@@ -87,11 +94,8 @@ if (!empty($errors)) {
 END;
 }
 
-// if we didnt pass either of the two forms
-if (!$passed) {
-	// display the choose fileName form
-	echo addChooseFileForm();
-}
+// close content container div
+echo "</div>";
 
 // end the page
 echo Page::footer();
@@ -99,6 +103,8 @@ echo Page::footer();
 // flush out the output
 ob_end_flush();
 ?>
+
+
 
 <?php
 
@@ -333,7 +339,7 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	// ******************* BUILD THE FORM ***********************
 
 	// build the form
-	$result = "<div class='error_message' >\n";
+	$result = "<div class='content_results' >\n";
 	$result .= "<form method=\"get\">\n";
 
 	// instead of hidden elements, lets build session variables to store essential info
@@ -347,7 +353,7 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	// the name should be the field name, then the value should be the column number
 	foreach ($fieldNames as $field) {
 		// enclose in container
-		$result .= "<p>";
+		$result .= "<div class='form_field_rfloat'>";
 		
 		// build the label
 		$result .= "<label for='$field'>$field</label>";
@@ -355,15 +361,17 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 		// build the select
 		$result .= Form::buildSelect($values, $field, $headers, null, "fileAssocSelect");
 		
-		$result .= "</p>";
+		$result .= "</div>";
 	}
 
 	// add the reset button
+	$result .= "<div class='form_field_rfloat'>";
 	$result .= "<input type='reset' />";
 
 	// add the get info submit button
 	$result .= "<input type=\"submit\" name=\"submit\" value=\"$submitFieldAssoc\"/>\n";
-
+	
+	$result .= "</div>\n";
 	$result .= "</form>\n";
 	$result .= "</div>\n";
 
@@ -383,8 +391,9 @@ function addChooseFileForm() {
 	$result .= "<form method=\"get\" >\n";
 
 	// add table select
-	$tables = array("cms_news", "cms_editorial","cms_banner");
-	$result .= "<div class='login_form'>";
+	$tables = array("cms_banner", "cms_news", "cms_editorial");
+	$result .= "<div class='form_field_rfloat'>";
+
 	$result .= "<label for=\"tableName\">Table Name: </label>\n";
 	$result .= Form::buildSelect($tables, "tableName");
 	$result .= "</div>\n";
@@ -393,19 +402,19 @@ function addChooseFileForm() {
 	// get the file names in the load data directory
 	$fileNames = Utils::getFileNames(Utils::getLoadFileLoc());
 
-	$result .= "<div class='login_form'>";
+	$result .= "<div class='form_field_rfloat'>";
 	$result .= "<label for=\"fileName\">File Name: </label>\n";
 	$result .= Form::buildSelect($fileNames, "fileName");
 	$result .= "</div>\n";
 
 	// add the header checkbox
-	$result .= "<div class='login_form'>";
+	$result .= "<div class='form_field_rfloat'>";
 	$result .= "<label for=\"hasHeaders\">File contains header row</label>";
 	$result .= "<input type=\"checkbox\" name=\"hasheaders\"/>";
 	$result .= "</div>\n";
 
 	// add the delimiter name
-	$result .= "<div class='login_form'>";
+	$result .= "<div class='form_field_rfloat'>";
 	$result .= "<label for=\"delimiter\">Delimiter: </label>\n";
 	$result .= "<input name=\"delimiter\" size=\"5\" value=\"|\" style='width:.5em;'></input>\n";
 

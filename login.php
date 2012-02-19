@@ -98,14 +98,17 @@ echo Page::header("login.php");
 // add navigation
 echo Page::addNav();
 
-//display any messages
+// add content container div
+echo "<div id='content_container'>";
+
+echo "<h1>Login</h1>";
 
 //create and display form with containing div
 echo '<div class="content">' . "\n";
 echo '<form id="form1" name="form1" method="post" action="login.php">' . "\n";
 
 // start container per input
-echo "\t" . '<div class="login_form">' . "\n";
+echo "\t" . '<div class="form_field_rfloat">' . "\n";
 // add label
 echo "\t" . "\t" . '<label for="name" class="label">Username:</label>';
 // add input
@@ -123,7 +126,7 @@ echo '<input type="submit" name="submit" value="Submit" class="button" />';
 echo "\t" . '</div>' . "\n";
 
 // start container per input
-echo "\t" . '<div class="login_form">' . "\n";
+echo "\t" . '<div class="form_field_rfloat">' . "\n";
 // add label
 echo "\t" . "\t" . '<label for="password" class="label">Password:</label>';
 // add input
@@ -149,6 +152,9 @@ if (!empty($errors)) {
 
 END;
 }
+
+// close content container div
+echo "</div>";
 
 // end the page
 echo Page::footer();
