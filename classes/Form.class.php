@@ -39,7 +39,7 @@ class Form {
 		$error = "";
 		
 		// check if its allowed to be empty
-		if(empty($value) && !$nullable){
+		if(strlen($value) == 0 && !$nullable){
 			// display error saying this shouldnt be empty
 			$error = "The field $fieldName is not allowed to be empty";
 			
@@ -56,7 +56,41 @@ class Form {
 			} else{
 				// proceed with type validation
 				
-			}
+				
+				// grab the type
+				$type = substr($type, 0, stripos($type, "("));
+				
+				$errType = "";
+				
+				switch($type){
+					case "varchar":
+						// check if its a string
+						if(!is_string(value)){
+							$errType = "string";
+						}
+						break;
+					case "int":
+						if(is_numeric($value)){
+							// convert to integer
+							$value = intval($value);
+						} else{
+							// this should have been an integer
+							$errType = "number";
+						}
+					case "timestamp":
+					
+						break;
+						
+					default:
+						break;
+					
+				} // switch
+				
+				if(!empty($errType)){
+					$error = "The field $fieldName should be a ".$errType;
+				}
+				
+			} // else;
 		}
 		
 		return $error;
