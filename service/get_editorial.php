@@ -22,6 +22,7 @@ $db->doQuery($query);
 // grab the result
 $content = $db->fetch_array();
 
+// grab the first element (there should only be one anyways)
 echo (array_pop($content));
 
 // flush out the output
