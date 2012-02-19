@@ -17,13 +17,15 @@ $db = Database::getInstance();
 // build the query to get the editorial
 $query = "select content from cms_editorial where current=1 order by current DESC, pubdate DESC limit 0, 1";
 // execute the query
-$db->doQuery($query);
+$db -> doQuery($query);
 
 // grab the result
-$content = $db->fetch_array();
+$content = $db -> fetch_array();
 
-// grab the first element (there should only be one anyways)
-echo (array_pop($content));
+if ($content) {
+	// grab the first element (there should only be one anyways)
+	echo(array_pop($content));
+}
 
 // flush out the output
 ob_end_flush();
