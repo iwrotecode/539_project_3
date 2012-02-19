@@ -213,13 +213,13 @@ function processImport() {
 
 					// change the formatting for pubdate
 					if ($field == "pubdate") {
-						$item = SQLConvertor::getSQLDateTime($item);
+						$item = Form::getSQLDateTime($item);
 					}
 
 					$data[$field] = $item;
 				} else {
 					// since the string was empty
-					// just insert a blank
+					// just insert a blank 
 					$data[$field] = "";
 				}
 

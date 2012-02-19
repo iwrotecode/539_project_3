@@ -2,6 +2,66 @@
 
 class Form {
 
+	private static $fieldTypeAssoc = array(
+		"int"=>"i", "text"=>"b", "tinyint"=>"i"
+	);
+	
+	
+	/**
+	 * Gets the string representation of the type for the mysqli bind param statement
+	 * 
+	 * @param type the type specified by the table
+	 */
+	static function getParamType($type){
+		$result = "s";	
+
+		// get the field by getting text before parenthesis
+		$field = substr($type, 0, stripos($type, "("));
+
+		$array = self::$fieldTypeAssoc;
+		
+		if(isset($array[$field]) && !empty($array[$field])){
+			$result = $array[$field];
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * Checks to see if the value is valid, based on the other field criteria
+	 * 
+	 * @param fieldName 	Used to specify which field was incorrect
+	 * @param value 			Value to check validity, converted to match the type
+	 * @param nullable		Determines if field is allowed to be null
+	 */
+	static function validateField($fieldName, &$value, $type, $nullable){
+		// setup error message	
+		$error = "";
+		
+		// check if its allowed to be empty
+		if(empty($value) && !$nullable){
+			// display error saying this shouldnt be empty
+			$error = "The field $fieldName is not allowed to be empty";
+			
+		} else{
+			// proceed with length validation
+			
+			// grab the length - expecting something like: varchar(11) 
+			$maxLen = substr($type, stripos($type, "("), stripos($type, ")"));
+			
+			// check if value length exceeds maximum length
+			if(strlen($value) > $maxLen){
+				// exceeds length diplay errror
+				$error = "The field $fieldName exceeds the maximum length of $maxLen";
+			} else{
+				// proceed with type validation
+				
+			}
+		}
+		
+		return $error;
+	}
+	
 	/**
 	 * Builds the textual representation of a select option element based on the
 	 * passed in $values and $texts passed in. If no texts specified, will only
@@ -80,5 +140,24 @@ class Form {
 		return $result;
 	}
 
+
+		/**
+	 * Tries to get a date time from the passed in string.
+	 * If it cannot, it passes back the current dateTime
+	 */
+	static function getSQLDateTime($date) {
+		// convert to unix time stamp
+		$dt = strtotime($date);
+
+		// change to mySQL format-> YYYY-MM-DD HH:mm:SS
+		$dt = @date("Y-m-d H:i:s", $dt);
+
+		// if date failed, use current time
+		if (!$dt) {
+			$dt = @date("Y-m-d H:i:s", time());
+		}
+
+		return $dt;
+	}
 }
 ?>
