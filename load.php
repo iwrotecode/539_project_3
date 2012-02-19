@@ -187,9 +187,6 @@ function processImport() {
 		$db = Database::getInstance();
 
 		$colInfo = $db -> getColInfo($tableName);
-		
-		// TODO: Delete test
-		// var_dump($colInfo);
 
 		// start inserting the records
 		for ($i = $start; $i < $end; $i++) {
@@ -207,32 +204,33 @@ function processImport() {
 				$col = $fieldAssoc[$field];
 
 				// make sure the col is not empty and a number
-				if ($field != "pubdate" && strlen($col) > 0) {
+				if (is_numeric($col) && strlen($col) > 0) {
+					// convert to a integer
 					$col = intval($col);
-
+					// get that item at the specified column
 					$item = trim($record[$col]);
-
-					// change the formatting for pubdate
-					if ($field == "pubdate") {
-						$item = Form::getSQLDateTime($item);
-					}
-
-					$data[$field] = $item;
 				} else {
 					// since the string was empty
 					// just insert a blank 
-					$data[$field] = "";
+					$item = "";
 				}
+
+				// change the formatting for pubdate
+				if ($field == "pubdate") {
+					$item = Form::getSQLDateTime($item);
+				}
+				
+				// insert to data
+				$data[$field] = $item;
 
 				// get the type
 				$types[$field] = Form::getParamType($colInfo[$field]['Type']);
-				
+
 			}
-			
 
 			// insert into array
-			// $db = Database::getInstance();
-			// $queryError = $db->doQuery($query, $data, $types);
+			$db = Database::getInstance();
+			$queryError = $db->doQuery($query, $data, $types);
 
 			if (empty($queryError)) {
 				echo "<p>Record $i was added!</p>";
@@ -342,8 +340,8 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	// build the form
 	$result = "<div class='content_results' >\n";
 	// add a header
-	$result .= "<h2>Import ".basename($fileName)." to $tableName</h2>";
-	
+	$result .= "<h2>Import " . basename($fileName) . " to $tableName</h2>";
+
 	$result .= "<form method=\"get\">\n";
 
 	// instead of hidden elements, lets build session variables to store essential info

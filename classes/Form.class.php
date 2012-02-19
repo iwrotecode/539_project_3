@@ -183,10 +183,7 @@ class Form {
 	 * Tries to get a date time from the passed in string.
 	 * If it cannot, it passes back the current dateTime
 	 */
-	static function getSQLDateTime($date) {
-		// TODO: Delete
-		echo "<p>Date to convert: $date</p>";
-		
+	static function getSQLDateTime($date="") {
 		// convert to unix time stamp
 		$dt = strtotime($date);
 
