@@ -226,18 +226,9 @@ class Table {
 		array_pop($fields);
 
 		// do sanitization and validation
-		echo "<div style='color:black'>";
-
-		echo "Results before sanitization";
-		var_dump($fields);
 
 		// Sanitize data before validation
 		Form::sanitizeResults($fields);
-
-		echo "Results after sanitization";
-		var_dump($fields);
-
-		echo "</div>";
 
 		// make sure if the results are valid
 		$error = Form::validateResults($results, $tableName);
