@@ -183,7 +183,7 @@ function processImport() {
 
 		$start = intval($hasHeaderRow);
 		$end = count($records);
-		
+
 		// setup database connect
 		$db = Database::getInstance();
 		// get the col info
@@ -212,7 +212,7 @@ function processImport() {
 					$item = trim($record[$col]);
 				} else {
 					// since the string was empty
-					// just insert a blank 
+					// just insert a blank
 					$item = "";
 				}
 
@@ -220,7 +220,7 @@ function processImport() {
 				if ($field == "pubdate") {
 					$item = Form::getSQLDateTime($item);
 				}
-				
+
 				// insert to data
 				$data[$field] = $item;
 
@@ -231,7 +231,7 @@ function processImport() {
 
 			// insert into array
 			$db = Database::getInstance();
-			$queryError = $db->doQuery($query, $data, $types);
+			$queryError = $db -> doQuery($query, $data, $types);
 
 			if (empty($queryError)) {
 				echo "<p>Record $i was added!</p>";

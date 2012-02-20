@@ -14,7 +14,7 @@ class Form {
 
 	// make sure if the results are valid
 	static function validateResults(&$results, $tableName) {
-		$result = "";
+		$errors = "";
 
 		// validate everything
 
@@ -23,10 +23,21 @@ class Form {
 		// get the col info
 		$colInfo = $db -> getColInfo($tableName);
 
-		foreach ($results as $result) {
+		foreach ($results as $key => $result) {
+			// get the type for this field
+			$type = $colInfo[$key]['Type'];
+			// get if nullable
+			$nullable = ($colInfo[$key]['Null'] == "YES" ? true : false);
 
+			// try to validate
+			$error = self::validateField($key, $result, $type, $nullable);
+
+			if (!empty($error)) {
+				$errors .= "<p>" . $error . "</p>";
+			}
 		}
-		return $result;
+
+		return $errors;
 	}
 
 	/**
@@ -51,12 +62,13 @@ class Form {
 		if (strlen($value) == 0 && !$nullable) {
 			// display error saying this shouldnt be empty
 			$error = "The field $fieldName is not allowed to be empty";
-
 		} else {
 			// proceed with length validation
 
 			// grab the length - expecting something like: varchar(11)
-			$maxLen = intval(substr($type, stripos($type, "("), stripos($type, ")")));
+			$start = stripos($type, "(") + 1;
+			$end = stripos($type, ")");
+			$maxLen = intval(substr($type, $start, $end - $start));
 
 			// check if value length exceeds maximum length
 			if (strlen($value) > $maxLen) {
@@ -74,10 +86,11 @@ class Form {
 				switch($type) {
 					case "varchar" :
 					// check if its a string
-						if (!is_string(value)) {
+						if (!is_string($value)) {
 							$errType = "string";
 						}
 						break;
+
 					case "int" :
 					case 'tinyint' :
 						if (is_numeric($value)) {
@@ -87,17 +100,19 @@ class Form {
 							// this should have been an integer
 							$errType = "number";
 						}
+						break;
+
 					case "timestamp" :
 					// Check if its a date time by converting to a unix time stamp
 						if (strtotime($value)) {
 							$value = getSQLDateTime($value);
 						} else {
-							$error = "date and time value";
+							$errType = "date and time value";
 						}
 						break;
 
 					default :
-						$error = "Unexpected field type";
+						$errType = "Unexpected field type";
 						break;
 				}// switch
 

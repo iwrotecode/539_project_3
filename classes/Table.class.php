@@ -259,13 +259,19 @@ class Table {
 		$fields = $_POST;
 		array_pop($fields);
 
-		// do sanitization and validation
-
 		// Sanitize data before validation
 		Form::sanitizeResults($fields);
 
 		// make sure if the results are valid
-		$error = Form::validateResults($results, $tableName);
+
+		$error = Form::validateResults($fields, $tableName);
+		
+		// check if there were any validation errors
+		if(!empty($error)){
+			// do something
+			echo "failed validation";
+			die($error);
+		} 
 
 		// initializes sql statement
 		$sql = "UPDATE $tableName ";
