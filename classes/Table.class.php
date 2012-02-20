@@ -20,7 +20,7 @@ class Table {
 		switch ($accessLevel) {
 			// admin access
 			case 1 :
-				// do nothing different
+			// do nothing different
 				break;
 
 			// editor access
@@ -264,24 +264,24 @@ class Table {
 
 		// make sure if the results are valid
 		$error = Form::validateResults($fields, $tableName);
-		
+
 		// check if there were any validation errors
-		if(!empty($error)){
+		if (!empty($error)) {
 			// do something
 			echo "<div class='error_message'>$error</div>";
-		} else { 
+		} else {
 			// initializes sql statement
 			$sql = "UPDATE $tableName ";
-	
+
 			// initializes counters
 			$x = 1;
 			$i = 1;
-	
+
 			// gets the number of fields
 			$number_of_fields = count($fields);
-	
+
 			$sql .= "SET ";
-	
+
 			// loops to create the values placeholder
 			foreach ($fields as $field => $value) {
 				if (($number_of_fields - $x) < 1) {
@@ -290,31 +290,30 @@ class Table {
 				if ((($number_of_fields - $x) >= 1) && ($x != 1)) {
 					$sql .= "$field = ?, ";
 				}
-	
+
 				$x++;
 			}
-	
+
 			$sql .= "WHERE ";
-	
+
 			// loops through the post array to get the where value
 			foreach ($fields as $field => $value) {
 				if ($i < 2) {
 					$sql .= "$field = $value ";
-	
+
 					$i++;
 				}
-	
+
 			}
-	
+
 			// initializes vars & types array
 			$vars = array();
 			$types = array();
-	
+
 			// resets x counter
 			$x = 1;
-	
+
 			// loops through the post array to create vars array
-			// TODO: need to call a field validation function here
 			foreach ($fields as $field => $value) {
 				if (($number_of_fields - $x) < 1) {
 					if ($field == 'password') {
@@ -345,14 +344,14 @@ class Table {
 						$types[] = substr(gettype($value), 0, 1);
 					}
 				}
-	
+
 				$x++;
 			}
-	
+
 			// runs generated sql statement
 			$db = Database::getInstance();
 			$err = $db -> doQuery($sql, $vars, $types);
-	
+
 			// refreshes page to show item was added
 			header("Location: admin.php?database_table=$tableName");
 		}
@@ -360,73 +359,88 @@ class Table {
 
 	// adds a DB Table record
 	static function addDBTableRecord($results, $tableName) {
-		// initializes sql statement
-		$sql = "INSERT INTO $tableName ";
-		$sql .= "VALUES (";
 
 		// removes the submit value from post array
 		$fields = $_POST;
 		array_pop($fields);
 
-		// gets the number of fields
-		$number_of_fields = count($fields);
+		// Sanitize data before validation
+		Form::sanitizeResults($fields);
 
-		// loops to create the values placeholder
-		for ($x = 0; $x < $number_of_fields; $x++) {
-			if (($number_of_fields - $x) > 1) {
-				$sql .= "?, ";
-			}
-			if (($number_of_fields - $x) == 1) {
-				$sql .= "?";
-			}
-		}
+		// make sure if the results are valid
+		$error = Form::validateResults($fields, $tableName);
 
-		$sql .= ")";
+		// check if there were any validation errors
+		if (!empty($error)) {
+			// do something
+			echo "<div class='error_message'>$error</div>";
+		} else {
+			// passed validation
 
-		// initializes vars & types array
-		$vars = array();
-		$types = array();
+			// initializes sql statement
+			$sql = "INSERT INTO $tableName ";
+			$sql .= "VALUES (";
 
-		// loops through the post array to create vars array
-		// TODO: need to call a field validation function here
-		foreach ($fields as $field => $value) {
-			if (($number_of_fields - $x) < 1) {
-				if ($field == 'password') {
-					if (Utils::is_sha1($value)) {
-						$vars[] = $value;
-						$types[] = substr(gettype($value), 0, 1);
-					} else {
-						$vars[] = sha1($value);
-						$types[] = substr(gettype($value), 0, 1);
-					}
-				} else {
-					$vars[] = $value;
-					$types[] = substr(gettype($value), 0, 1);
+			// gets the number of fields
+			$number_of_fields = count($fields);
+
+			// loops to create the values placeholder
+			for ($x = 0; $x < $number_of_fields; $x++) {
+				if (($number_of_fields - $x) > 1) {
+					$sql .= "?, ";
+				}
+				if (($number_of_fields - $x) == 1) {
+					$sql .= "?";
 				}
 			}
-			if ((($number_of_fields - $x) >= 1) && ($x != 1)) {
-				if ($field == 'password') {
-					if (Utils::is_sha1($value)) {
+
+			$sql .= ")";
+
+			// initializes vars & types array
+			$vars = array();
+			$types = array();
+
+			// loops through the post array to create vars array
+			foreach ($fields as $field => $value) {
+				if (($number_of_fields - $x) < 1) {
+					if ($field == 'password') {
+						if (Utils::is_sha1($value)) {
+							$vars[] = $value;
+							$types[] = substr(gettype($value), 0, 1);
+						} else {
+							$vars[] = sha1($value);
+							$types[] = substr(gettype($value), 0, 1);
+						}
+					} else {
 						$vars[] = $value;
 						$types[] = substr(gettype($value), 0, 1);
+					}
+				}
+				if ((($number_of_fields - $x) >= 1) && ($x != 1)) {
+					if ($field == 'password') {
+						if (Utils::is_sha1($value)) {
+							$vars[] = $value;
+							$types[] = substr(gettype($value), 0, 1);
+						} else {
+							echo Utils::is_sha1($number_of_fields);
+							$vars[] = sha1($value);
+							$types[] = substr(gettype($value), 0, 1);
+						}
 					} else {
-						echo Utils::is_sha1($number_of_fields);
-						$vars[] = sha1($value);
+						$vars[] = $value;
 						$types[] = substr(gettype($value), 0, 1);
 					}
-				} else {
-					$vars[] = $value;
-					$types[] = substr(gettype($value), 0, 1);
 				}
 			}
+
+			// runs generated sql statement
+			$db = Database::getInstance();
+			$err = $db -> doQuery($sql, $vars, $types);
+
+			// refreshes page to show item was added
+			header("Location: admin.php?database_table=$tableName");
 		}
 
-		// runs generated sql statement
-		$db = Database::getInstance();
-		$err = $db -> doQuery($sql, $vars, $types);
-
-		// refreshes page to show item was added
-		header("Location: admin.php?database_table=$tableName");
 	}
 
 }
