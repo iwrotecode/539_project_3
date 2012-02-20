@@ -60,12 +60,12 @@ if ($accessLevel != Utils::getAdminLevel()) {
 	$reqFields = array("tableName", "fileName", "delimiter");
 
 	// check to see if the form was submitted
-	if (isset($_GET['submit']) && !empty($_GET['submit'])) {
-		if ($_GET['submit'] == $submitFileName) {
+	if (isset($_POST['submit']) && !empty($_POST['submit'])) {
+		if ($_POST['submit'] == $submitFileName) {
 			// file form was submitted, need to build the file associat
 
 			// check that the required fields were submitted
-			if (Utils::arrayContainsVals($_GET, $reqFields)) {
+			if (Utils::arrayContainsVals($_POST, $reqFields)) {
 
 				// start processing of getting table info
 				$result = processGetTableInfo();
@@ -77,7 +77,7 @@ if ($accessLevel != Utils::getAdminLevel()) {
 				// ERROR: missing one or more required fields
 				$errors .= "<p>Missing one or more required fields</p>";
 			}
-		} else if ($_GET['submit'] == $submitFieldAssoc) {
+		} else if ($_POST['submit'] == $submitFieldAssoc) {
 
 			// make sure the required fields were passed
 			// add extra required field
@@ -121,13 +121,13 @@ ob_end_flush();
 
 function processGetTableInfo() {
 	$errors = "";
-	$tableName = $_GET['tableName'];
-	$fileName = Utils::getLoadFileLoc() . "/" . $_GET['fileName'];
-	$delim = $_GET['delimiter'];
+	$tableName = $_POST['tableName'];
+	$fileName = Utils::getLoadFileLoc() . "/" . $_POST['fileName'];
+	$delim = $_POST['delimiter'];
 	$hasHeaderRow = false;
 
 	// checks if they check the checkbox
-	if (Utils::arrayContainsVals($_GET, array("hasheaders")) && $_GET['hasheaders'] == "on") {
+	if (Utils::arrayContainsVals($_POST, array("hasheaders")) && $_POST['hasheaders'] == "on") {
 		// if so, then they said it has a header row
 		$hasHeaderRow = true;
 	}
@@ -172,7 +172,7 @@ function processImport() {
 
 		// setup array for insertions
 		foreach ($fieldNames as $field) {
-			$fieldAssoc[$field] = $_GET[$field];
+			$fieldAssoc[$field] = $_POST[$field];
 		}
 
 		// perform insertions
@@ -356,7 +356,7 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	// add a header
 	$result .= "<h2>Import " . basename($fileName) . " to $tableName</h2>";
 
-	$result .= "<form method=\"get\">\n";
+	$result .= "<form method=\"post\">\n";
 
 	// instead of hidden elements, lets build session variables to store essential info
 	$_SESSION['tableName'] = $tableName;
@@ -404,7 +404,7 @@ function addChooseFileForm() {
 
 	// add the first form
 	$result .= "<div class='content'>\n";
-	$result .= "<form method=\"get\" >\n";
+	$result .= "<form method=\"post\" >\n";
 
 	// add table select
 	$tables = array("cms_banner", "cms_news", "cms_editorial");
