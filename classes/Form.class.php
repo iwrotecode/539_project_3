@@ -1,12 +1,25 @@
 <?php
 
-
-
-
-
 class Form {
 
 	private static $fieldTypeAssoc = array("int" => "i", "text" => "b", "tinyint" => "i");
+
+	// Sanitize data before validation
+	static function sanitizeResults(&$results) {
+		// sanitize everything in the results
+		foreach ($results as &$result) {
+			self::sanitize_data(&$result);
+		}
+	}
+
+	// make sure if the results are valid
+	static function validateResults($results, $tableName) {
+		$result = "";
+		
+		// validate everything
+
+		return $result;
+	}
 
 	/**
 	 * Gets the string representation of the type for the mysqli bind param statement
@@ -29,11 +42,32 @@ class Form {
 	}
 
 	/**
-	 * Checks to see if the value is valid, based on the other field criteria
+	 * Sanitizes the passed in value, and updates it
+	 */
+	static function sanitize_data(&$var) {
+		// only need to sanitize strings
+		if (is_string($var)) {
+			$var = trim($var);
+			$var = stripslashes($var);
+			// $var = htmlentities($var);
+			$var = strip_tags($var);
+			$var = preg_replace('/\r\n/', '<br />', $var);
+		}
+	}
+
+	/**
+	 * Checks to see if the value is valid, based on the other field criteria.
+	 * 3 step validation:
+	 * 		1st - check if its allowed to be empty
+	 * 		2nd - make sure it doesnt exceed maximum length
+	 * 		3rd - make sure its the right type, if so convert to that type
+	 *
 	 *
 	 * @param fieldName 	Used to specify which field was incorrect
 	 * @param value 			Value to check validity, converted to match the type
 	 * @param nullable		Determines if field is allowed to be null
+	 *
+	 * @return empty if there were no errors, something if there was
 	 */
 	static function validateField($fieldName, &$value, $type, $nullable) {
 		// setup error message
@@ -48,7 +82,7 @@ class Form {
 			// proceed with length validation
 
 			// grab the length - expecting something like: varchar(11)
-			$maxLen = substr($type, stripos($type, "("), stripos($type, ")"));
+			$maxLen = intval(substr($type, stripos($type, "("), stripos($type, ")")));
 
 			// check if value length exceeds maximum length
 			if (strlen($value) > $maxLen) {
@@ -62,6 +96,7 @@ class Form {
 
 				$errType = "";
 
+				// switch based on type
 				switch($type) {
 					case "varchar" :
 					// check if its a string
@@ -183,10 +218,7 @@ class Form {
 	 * Tries to get a date time from the passed in string.
 	 * If it cannot, it passes back the current dateTime
 	 */
-	static function getSQLDateTime($date) {
-		// TODO: Delete
-		echo "<p>Date to convert: $date</p>";
-		
+	static function getSQLDateTime($date = "") {
 		// convert to unix time stamp
 		$dt = strtotime($date);
 
