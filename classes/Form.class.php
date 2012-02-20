@@ -69,22 +69,31 @@ class Form {
 			$start = stripos($type, "(") + 1;
 			$end = stripos($type, ")");
 			$maxLen = intval(substr($type, $start, $end - $start));
-
+			
 			// check if value length exceeds maximum length
-			if (strlen($value) > $maxLen) {
+			if ($maxLen != 0 && strlen($value) > $maxLen) {
 				// exceeds length diplay errror
 				$error = "The field $fieldName exceeds the maximum length of $maxLen";
 			} else {
 				// proceed with type validation
 
 				// grab the type
-				$type = substr($type, 0, stripos($type, "("));
+				// check to see if there is a length passed
+				$end = stripos($type, "(");
+				
+				// if not, then the end is the entire length
+				if(!$end){
+					$end = strlen($type);
+				}
+				
+				$type = substr($type, 0, $end);
 
 				$errType = "";
 
 				// switch based on type
 				switch($type) {
 					case "varchar" :
+					case "text" :
 					// check if its a string
 						if (!is_string($value)) {
 							$errType = "string";
@@ -105,7 +114,7 @@ class Form {
 					case "timestamp" :
 					// Check if its a date time by converting to a unix time stamp
 						if (strtotime($value)) {
-							$value = getSQLDateTime($value);
+							$value = self::getSQLDateTime($value);
 						} else {
 							$errType = "date and time value";
 						}
