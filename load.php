@@ -68,7 +68,7 @@ if ($accessLevel != Utils::getAdminLevel()) {
 			if (Utils::arrayContainsVals($_POST, $reqFields)) {
 
 				// TODO: check if they have a file, and if there was an error
-				if (isset($_FILES['datafile']) && $file = $_FILES['datafile']) {
+				if (isset($_FILES['datafile']) && !empty($_FILES['datafile']['size'])&& $file = $_FILES['datafile']) {
 					$tempError = Utils::updloadFile($file, Utils::getLoadFileLoc() . "/");
 
 					if (empty($tempError)) {
