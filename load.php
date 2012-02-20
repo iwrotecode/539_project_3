@@ -183,9 +183,10 @@ function processImport() {
 
 		$start = intval($hasHeaderRow);
 		$end = count($records);
-
+		
+		// setup database connect
 		$db = Database::getInstance();
-
+		// get the col info
 		$colInfo = $db -> getColInfo($tableName);
 
 		// start inserting the records

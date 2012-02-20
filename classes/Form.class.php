@@ -7,52 +7,26 @@ class Form {
 	// Sanitize data before validation
 	static function sanitizeResults(&$results) {
 		// sanitize everything in the results
-		foreach ($results as &$result) {
-			self::sanitize_data(&$result);
+		foreach ($results as $result) {
+			self::sanitize_data($result);
 		}
 	}
 
 	// make sure if the results are valid
-	static function validateResults($results, $tableName) {
+	static function validateResults(&$results, $tableName) {
 		$result = "";
-		
+
 		// validate everything
 
-		return $result;
-	}
+		// setup database connect
+		$db = Database::getInstance();
+		// get the col info
+		$colInfo = $db -> getColInfo($tableName);
 
-	/**
-	 * Gets the string representation of the type for the mysqli bind param statement
-	 *
-	 * @param type the type specified by the table
-	 */
-	static function getParamType($type) {
-		$result = "s";
+		foreach ($results as $result) {
 
-		// get the field by getting text before parenthesis
-		$field = substr($type, 0, stripos($type, "("));
-
-		$array = self::$fieldTypeAssoc;
-
-		if (isset($array[$field]) && !empty($array[$field])) {
-			$result = $array[$field];
 		}
-
 		return $result;
-	}
-
-	/**
-	 * Sanitizes the passed in value, and updates it
-	 */
-	static function sanitize_data(&$var) {
-		// only need to sanitize strings
-		if (is_string($var)) {
-			$var = trim($var);
-			$var = stripslashes($var);
-			// $var = htmlentities($var);
-			$var = strip_tags($var);
-			$var = preg_replace('/\r\n/', '<br />', $var);
-		}
 	}
 
 	/**
@@ -135,6 +109,40 @@ class Form {
 		}
 
 		return $error;
+	}
+
+	/**
+	 * Gets the string representation of the type for the mysqli bind param statement
+	 *
+	 * @param type the type specified by the table
+	 */
+	static function getParamType($type) {
+		$result = "s";
+
+		// get the field by getting text before parenthesis
+		$field = substr($type, 0, stripos($type, "("));
+
+		$array = self::$fieldTypeAssoc;
+
+		if (isset($array[$field]) && !empty($array[$field])) {
+			$result = $array[$field];
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Sanitizes the passed in value, and updates it
+	 */
+	static function sanitize_data(&$var) {
+		// only need to sanitize strings
+		if (is_string($var)) {
+			$var = trim($var);
+			$var = stripslashes($var);
+			// $var = htmlentities($var);
+			$var = strip_tags($var);
+			$var = preg_replace('/\r\n/', '<br />', $var);
+		}
 	}
 
 	/**
