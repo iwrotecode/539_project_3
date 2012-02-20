@@ -61,7 +61,7 @@ class Table {
 			if (is_numeric($_GET['count'])) {
 				if ($_GET['count'] > 0) {
 					$countPerPage = ceil($_GET['count']);
-				} 
+				}
 			}
 		}
 
@@ -209,7 +209,6 @@ class Table {
 
 				$i++;
 			}
-
 		}
 
 		// runs generated sql statement
@@ -252,7 +251,7 @@ class Table {
 
 		$sql .= "WHERE ";
 
-		// loops through the post array to create sql statement
+		// loops through the post array to get the where value
 		foreach ($fields as $field => $value) {
 			if ($i < 2) {
 				$sql .= "$field = $value ";
@@ -273,16 +272,36 @@ class Table {
 		// TODO: need to call a field validation function here
 		foreach ($fields as $field => $value) {
 			if (($number_of_fields - $x) < 1) {
-				$vars[] = $value;
-				$types[] = substr(gettype($value), 0, 1);
+				if ($field == 'password') {
+					if (Utils::is_sha1($value)) {
+						$vars[] = $value;
+						$types[] = substr(gettype($value), 0, 1);
+					} else {
+						$vars[] = sha1($value);
+						$types[] = substr(gettype($value), 0, 1);
+					}
+				} else {
+					$vars[] = $value;
+					$types[] = substr(gettype($value), 0, 1);
+				}
 			}
 			if ((($number_of_fields - $x) >= 1) && ($x != 1)) {
-				$vars[] = $value;
-				$types[] = substr(gettype($value), 0, 1);
+				if ($field == 'password') {
+					if (Utils::is_sha1($value)) {
+						$vars[] = $value;
+						$types[] = substr(gettype($value), 0, 1);
+					} else {
+						echo Utils::is_sha1($number_of_fields);
+						$vars[] = sha1($value);
+						$types[] = substr(gettype($value), 0, 1);
+					}
+				} else {
+					$vars[] = $value;
+					$types[] = substr(gettype($value), 0, 1);
+				}
 			}
 
 			$x++;
-
 		}
 
 		// runs generated sql statement
@@ -325,8 +344,35 @@ class Table {
 		// loops through the post array to create vars array
 		// TODO: need to call a field validation function here
 		foreach ($fields as $field => $value) {
-			$vars[] = $value;
-			$types[] = substr(gettype($value), 0, 1);
+			if (($number_of_fields - $x) < 1) {
+				if ($field == 'password') {
+					if (Utils::is_sha1($value)) {
+						$vars[] = $value;
+						$types[] = substr(gettype($value), 0, 1);
+					} else {
+						$vars[] = sha1($value);
+						$types[] = substr(gettype($value), 0, 1);
+					}
+				} else {
+					$vars[] = $value;
+					$types[] = substr(gettype($value), 0, 1);
+				}
+			}
+			if ((($number_of_fields - $x) >= 1) && ($x != 1)) {
+				if ($field == 'password') {
+					if (Utils::is_sha1($value)) {
+						$vars[] = $value;
+						$types[] = substr(gettype($value), 0, 1);
+					} else {
+						echo Utils::is_sha1($number_of_fields);
+						$vars[] = sha1($value);
+						$types[] = substr(gettype($value), 0, 1);
+					}
+				} else {
+					$vars[] = $value;
+					$types[] = substr(gettype($value), 0, 1);
+				}
+			}
 		}
 
 		// runs generated sql statement
