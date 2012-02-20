@@ -22,7 +22,7 @@ $(document).ready(function(){
 		// append span to the body
 		document.body.appendChild(temp);
 		
-		// grab the width
+		// grab the width - minus an offset 
 		var valueWidth = $(temp).width()-27;
 		
 		// remove the span
