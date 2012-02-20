@@ -19,6 +19,41 @@ class Utils {
 		return self::$adminLevel;
 	}
 
+	/**
+	 * updloads the file to the specified directory
+	 *
+	 * @param file An associative array attained from the $_FILES global array.
+	 * Expecting to have the associative keys specified from the $_FILES globabl array.
+	 *
+	 * @param location the location to move the file
+	 *
+	 * @return an error string if there were any errors
+	 */
+	static function updloadFile($file, $location) {
+		$errors = "";
+		
+		// check if there was an error
+		if (isset($file['error']) && $file['error'] > 0) {
+			// there was an error
+			$errors .= "<p>There was an error with the file upload, falling back 
+						on the filename choosen in the select.</p>";
+		} else {
+			// no errors, proceed with upload validation
+
+			// upload to the correct location
+			// grab the name
+			$name = $file["name"];
+			// grab the tmp name
+			$tmpName = $file['tmp_name'];
+			// grab the new location
+			$loc = $location . $name;
+			// move to new loaction
+			move_uploaded_file($name, $loc);
+		}
+		
+		return $errors;
+	}
+
 	static function getColNames($conn, $tableName) {
 		$cols_return = array();
 		$cols = mysql_query("SHOW COLUMNS FROM $tableName", $conn);
@@ -231,13 +266,13 @@ class Utils {
 
 			// get result of query
 			$access = $db -> fetch_array();
-			
+
 			// if we get a result set of 1
-			if(!is_null($access) && is_array($access) && count($access)==1){
+			if (!is_null($access) && is_array($access) && count($access) == 1) {
 				$value = array_pop($access);
 			}
 		}
-		
+
 		// return
 		return $value;
 	}

@@ -69,27 +69,15 @@ if ($accessLevel != Utils::getAdminLevel()) {
 
 				// TODO: check if they have a file, and if there was an error
 				if (isset($_FILES['datafile']) && $file = $_FILES['datafile']) {
-					// check if there was an error
-					if (isset($file['error']) && $file['error'] > 0) {
-						// there was an error
-						$errors .= "<p>There was an error with the file upload, falling back 
-						on the filename choosen in the select.</p>";
-					} else {
-						// no errors, proceed with upload validation
-						
-						// upload to the correct location
-						// grab the name
-						$name = $file["name"];
-						// grab the tmp name
-						$tmpName = $file['tmp_name'];
-						// grab the new location
-						$loc = Utils::getLoadFileLoc()."/".$name;
-						// move to new loaction
-						move_uploaded_file($name, $loc);
-						// change POST[filename] to be the name of the new file
-						$_POST['fileName'] = $name;
-					}
+					$tempError = Utils::updloadFile($file, Utils::getLoadFileLoc() . "/");
 
+					if (empty($tempError)) {
+						// change POST[filename] to be the name of the new file
+						$_POST['fileName'] = $file['name'];
+					} else {
+						// append error to errors stream
+						$errors .= $tempError;
+					}
 				}
 
 				// proceed as normal
