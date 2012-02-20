@@ -13,8 +13,11 @@ function __autoload($className) {
 	require_once 'classes/' . $className . '.class.php';
 }
 
+// add scripts
+$scripts = array("http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js","js/form.js");
+
 // start the page
-echo Page::header("Admin Page");
+echo Page::header("Admin Page", "css/styles.css", $scripts);
 //for the actual project you might want to check access level at this point
 
 // add navigation
