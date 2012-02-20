@@ -221,16 +221,39 @@ class Table {
 
 	// updates a DB Table record
 	static function modifyDBTableRecord($results, $tableName) {
+		// removes the submit value from post array
+		$fields = $_POST;
+		array_pop($fields);
+
+		// do sanitization and validation
+		echo "<div style='color:black'>";
+
+		echo "Results before sanitization";
+		var_dump($fields);
+
+		// Sanitize data before validation
+		Form::sanitizeResults($fields);
+
+		echo "Results after sanitization";
+		var_dump($fields);
+
+		echo "</div>";
+
+		// make sure if the results are valid
+		$error = Form::validateResults($results, $tableName);
+		
+		// check if there were any validation errors
+		if(!empty($error)){
+			// do something
+			die($error);
+		}
+
 		// initializes sql statement
 		$sql = "UPDATE $tableName ";
 
 		// initializes counters
 		$x = 1;
 		$i = 1;
-
-		// removes the submit value from post array
-		$fields = $_POST;
-		array_pop($fields);
 
 		// gets the number of fields
 		$number_of_fields = count($fields);
