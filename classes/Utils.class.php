@@ -147,7 +147,6 @@ class Utils {
 		return $result;
 	}
 
-
 	/**
 	 * Make sure that the keys specified exist in the array and its value is not empty
 	 *
@@ -201,13 +200,32 @@ class Utils {
 
 		return $result;
 	}
-	
+
 	// detects if string is sha1'd
 	static function is_sha1($str) {
-    	$status = preg_match('/^[0-9a-f]{40}$/i', $str);
-		
+		$status = preg_match('/^[0-9a-f]{40}$/i', $str);
+
 		return $status;
 	}
+
+	// gets access level of logged in user
+	static function getAccessLevel() {
+		if (isset($_SESSION['username'])) {
+			$username = $_SESSION['username'];
+
+			$sql = "SELECT access FROM cms_user WHERE username = '$username'";
+
+			$result = Table::executeSQL($sql);
+
+			foreach ($result as $column => $field) {
+				foreach ($field as $fieldType => $value) {}
+			}
+
+			return $value;
+		}
+	}
+
+
 
 
 }

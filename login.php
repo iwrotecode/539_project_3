@@ -66,6 +66,7 @@ if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 				
 				// set session
 				$_SESSION[$sessionVar] = $sessionValue;
+				$_SESSION['username'] = $username;
 				
 				// set cookie
 				$test = Utils::setcookie("username", $username);

@@ -4,6 +4,9 @@ class Table {
 
 	// grabs all tables in the DB, and returns a form to select them
 	static function displayDBTables() {
+		// get user access level
+		$accessLevel = Utils::getAccessLevel();
+
 		// grab all tables
 		$db = Database::getInstance();
 		$tableNames = $db -> getValidTableNames();
@@ -12,6 +15,37 @@ class Table {
 		$string = "<div class='content'>";
 		$string .= '<form action="admin.php" method="get">';
 		$string .= '<select name="database_table">';
+
+		// modifies available tables based on user access level
+		switch ($accessLevel) {
+			// admin access
+			case 1 :
+				// do nothing different
+				break;
+
+			// editor access
+			case 2 :
+				foreach ($tableNames as $key => $table) {
+					if ($table == "cms_user" || $table == "cms_edition" || $table == "cms_user_type") {
+						unset($tableNames[$key]);
+					}
+				}
+				break;
+
+			// advertiser access
+			case 3 :
+				foreach ($tableNames as $key => $table) {
+					if ($table != "cms_ads") {
+						unset($tableNames[$key]);
+					}
+				}
+				break;
+
+			// equiv to case 0 (no user)
+			default :
+				$error = "<div class='error_message'>No access granted!</div>";
+				die($error);
+		}
 
 		// loops through tables as a select
 		foreach ($tableNames as $table) {
@@ -232,12 +266,6 @@ class Table {
 
 		// make sure if the results are valid
 		$error = Form::validateResults($results, $tableName);
-		
-		// check if there were any validation errors
-		if(!empty($error)){
-			// do something
-			die($error);
-		}
 
 		// initializes sql statement
 		$sql = "UPDATE $tableName ";
