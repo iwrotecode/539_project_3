@@ -9,9 +9,15 @@ class Utils {
 	// private static $domain = "localhost";
 	// private static $secure = false;
 	private static $daysExpire = 3;
+	
+	private static $adminLevel = 1;
 
 	// variables for loading data
 	private static $loadFileLoc = "load_data";
+
+	static function getAdminLevel(){
+		return self::$adminLevel;
+	}
 
 	static function getColNames($conn, $tableName) {
 		$cols_return = array();

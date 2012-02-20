@@ -30,57 +30,73 @@ $submitFileName = "Initialize table";
 $submitFieldAssoc = "Import data";
 
 // add content
+
 // display a title for the page
 echo "<h1>Import Data</h1>";
 
-// variable to see if we passed form validation
-$passed = FALSE;
-// error strings
-$errors = "";
+// check user access level
+$accessLevel = Utils::getAccessLevel();
 
-// if we didnt pass either of the two forms
-if (!$passed) {
-	// display the choose fileName form
-	echo addChooseFileForm();
-}
+// if they have admin level rights
+if ($accessLevel != Utils::getAdminLevel()) {
+	// show access error
+	$errors = "No access granted!";
 
-// the required fields
-$reqFields = array("tableName", "fileName", "delimiter");
+} else {
+	// proceed like normal
 
-// check to see if the form was submitted
-if (isset($_GET['submit']) && !empty($_GET['submit'])) {
-	if ($_GET['submit'] == $submitFileName) {
-		// file form was submitted, need to build the file associat
+	// variable to see if we passed form validation
+	$passed = FALSE;
+	// error strings
+	$errors = "";
 
-		// check that the required fields were submitted
-		if (Utils::arrayContainsVals($_GET, $reqFields)) {
+	// if we didnt pass either of the two forms
+	if (!$passed) {
+		// display the choose fileName form
+		echo addChooseFileForm();
+	}
 
-			// start processing of getting table info
-			$result = processGetTableInfo();
-			$errors .= (!empty($result) ? "<p>" . processGetTableInfo() . "</p>" : "");
+	// the required fields
+	$reqFields = array("tableName", "fileName", "delimiter");
 
-			// $passed = true;
+	// check to see if the form was submitted
+	if (isset($_GET['submit']) && !empty($_GET['submit'])) {
+		if ($_GET['submit'] == $submitFileName) {
+			// file form was submitted, need to build the file associat
 
-		} else {
-			// ERROR: missing one or more required fields
-			$errors .= "<p>Missing one or more required fields</p>";
-		}
-	} else if ($_GET['submit'] == $submitFieldAssoc) {
+			// check that the required fields were submitted
+			if (Utils::arrayContainsVals($_GET, $reqFields)) {
 
-		// make sure the required fields were passed
-		// add extra required field
-		$reqFields[] = "fieldnames";
+				// start processing of getting table info
+				$result = processGetTableInfo();
+				$errors .= (!empty($result) ? "<p>" . processGetTableInfo() . "</p>" : "");
 
-		if (Utils::arrayContainsVals($_SESSION, $reqFields)) {
+				// $passed = true;
 
-			// start processing for import
-			$result = processImport();
-			$errors .= (!empty($result) ? "<p>" . processGetTableInfo() . "</p>" : "");
+			} else {
+				// ERROR: missing one or more required fields
+				$errors .= "<p>Missing one or more required fields</p>";
+			}
+		} else if ($_GET['submit'] == $submitFieldAssoc) {
 
-			// they passed
-			$passed = true;
+			// make sure the required fields were passed
+			// add extra required field
+			$reqFields[] = "fieldnames";
+
+			if (Utils::arrayContainsVals($_SESSION, $reqFields)) {
+
+				// start processing for import
+				$result = processImport();
+				$errors .= (!empty($result) ? "<p>" . processGetTableInfo() . "</p>" : "");
+
+				// they passed
+				$passed = true;
+			}
 		}
 	}
+	// close content container div
+	echo "</div>";
+
 }
 
 // display errors
@@ -93,9 +109,6 @@ if (!empty($errors)) {
 
 END;
 }
-
-// close content container div
-echo "</div>";
 
 // end the page
 echo Page::footer();
