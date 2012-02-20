@@ -62,14 +62,41 @@ if ($accessLevel != Utils::getAdminLevel()) {
 	// check to see if the form was submitted
 	if (isset($_POST['submit']) && !empty($_POST['submit'])) {
 		if ($_POST['submit'] == $submitFileName) {
-			// file form was submitted, need to build the file associat
+			// The have choosen their file, now to determine associations
 
 			// check that the required fields were submitted
 			if (Utils::arrayContainsVals($_POST, $reqFields)) {
 
+				// TODO: check if they have a file, and if there was an error
+				if (isset($_FILES['datafile']) && $file = $_FILES['datafile']) {
+					// check if there was an error
+					if (isset($file['error']) && $file['error'] > 0) {
+						// there was an error
+						$errors .= "<p>There was an error with the file upload, falling back 
+						on the filename choosen in the select.</p>";
+					} else {
+						// no errors, proceed with upload validation
+						
+						// upload to the correct location
+						// grab the name
+						$name = $file["name"];
+						// grab the tmp name
+						$tmpName = $file['tmp_name'];
+						// grab the new location
+						$loc = Utils::getLoadFileLoc()."/".$name;
+						// move to new loaction
+						move_uploaded_file($name, $loc);
+						// change POST[filename] to be the name of the new file
+						$_POST['fileName'] = $name;
+					}
+
+				}
+
+				// proceed as normal
+
 				// start processing of getting table info
 				$result = processGetTableInfo();
-				$errors .= (!empty($result) ? "<p>" . processGetTableInfo() . "</p>" : "");
+				$errors .= (!empty($result) ? "<p>" . $result . "</p>" : "");
 
 				// $passed = true;
 
@@ -87,7 +114,7 @@ if ($accessLevel != Utils::getAdminLevel()) {
 
 				// start processing for import
 				$result = processImport();
-				$errors .= (!empty($result) ? "<p>" . processGetTableInfo() . "</p>" : "");
+				$errors .= (!empty($result) ? "<p>" . $result . "</p>" : "");
 
 				// they passed
 				$passed = true;
@@ -404,7 +431,7 @@ function addChooseFileForm() {
 
 	// add the first form
 	$result .= "<div class='content'>\n";
-	$result .= "<form method=\"post\" >\n";
+	$result .= "<form method=\"post\" enctype=\"multipart/form-data\">\n";
 
 	// add table select
 	$tables = array("cms_banner", "cms_news", "cms_editorial");
@@ -421,6 +448,11 @@ function addChooseFileForm() {
 	$result .= "<div class='form_field_rfloat'>";
 	$result .= "<label for=\"fileName\">File Name: </label>\n";
 	$result .= Form::buildSelect($fileNames, "fileName");
+	$result .= "</div>\n";
+
+	// add the file upload input
+	$result .= "<div class='form_field_rfloat'>";
+	$result .= '<input type="file" name="datafile" size="40">';
 	$result .= "</div>\n";
 
 	// add the header checkbox
