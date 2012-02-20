@@ -201,6 +201,14 @@ class Utils {
 
 		return $result;
 	}
+	
+	// detects if string is sha1'd
+	static function is_sha1($str) {
+    	$status = preg_match('/^[0-9a-f]{40}$/i', $str);
+		
+		return $status;
+	}
+
 
 }
 ?>
