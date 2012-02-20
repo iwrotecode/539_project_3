@@ -9,13 +9,13 @@ class Utils {
 	// private static $domain = "localhost";
 	// private static $secure = false;
 	private static $daysExpire = 3;
-	
+
 	private static $adminLevel = 1;
 
 	// variables for loading data
 	private static $loadFileLoc = "load_data";
 
-	static function getAdminLevel(){
+	static function getAdminLevel() {
 		return self::$adminLevel;
 	}
 
@@ -216,23 +216,31 @@ class Utils {
 
 	// gets access level of logged in user
 	static function getAccessLevel() {
+		// set default return value
+		$value = 0;
+
 		if (isset($_SESSION['username'])) {
 			$username = $_SESSION['username'];
 
 			$sql = "SELECT access FROM cms_user WHERE username = '$username'";
 
-			$result = Table::executeSQL($sql);
+			// get instance
+			$db = Database::getInstance();
+			// perform query
+			$db -> doQuery($sql);
 
-			foreach ($result as $column => $field) {
-				foreach ($field as $fieldType => $value) {}
+			// get result of query
+			$access = $db -> fetch_array();
+			
+			// if we get a result set of 1
+			if(!is_null($access) && is_array($access) && count($access)==1){
+				$value = array_pop($access);
 			}
-
-			return $value;
 		}
+		
+		// return
+		return $value;
 	}
-
-
-
 
 }
 ?>
