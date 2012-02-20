@@ -1,9 +1,5 @@
 <?php
 
-
-
-
-
 class Form {
 
 	private static $fieldTypeAssoc = array("int" => "i", "text" => "b", "tinyint" => "i");
