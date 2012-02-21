@@ -88,7 +88,7 @@ class Table {
 	}
 
 	// displays paginated results in xml form
-	static function displayXML($sql = "", $tableName = "", $page = 1, $countPerPage = 5) {
+	static function displayXML($sql = "", $tableName = "", $edition_sql = "", $page = 1, $countPerPage = 5) {
 		// checks if custom countPerPage is set via GET
 		if (isset($_GET['count'])) {
 			// validates custom countPerPage
@@ -143,6 +143,28 @@ class Table {
 				} else {
 					$string .= "\t\t<$fieldType>$fieldInfo</$fieldType>\n";
 				}
+			}
+
+			// stores variables in array for sql editions query
+			$vars = array($field['id']);
+			$types = array("i");
+
+			// calls function to execute edition sql
+			$edition_results = self::executeSQL($edition_sql, $vars, $types);
+			
+			if (is_array($edition_results) && !empty($edition_results)) {
+				$string .= "\t<editions>\n";
+				
+				// loops through results, creating xml output for editions
+				foreach ($edition_results as $column => $field) {
+						foreach ($field as $key => $data) {
+							$string .= "\t<edition>$data</edition>\n";
+						}
+				}
+				
+				$string .= "\t</editions>\n";
+			} else {
+				$string .= "\t<editions />\n";
 			}
 
 			$string .= "\t</item>\n";
