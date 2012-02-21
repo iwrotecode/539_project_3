@@ -43,6 +43,17 @@ class Form {
 			// get if nullable
 			$nullable = ($colInfo[$key]['Null'] == "YES" ? true : false);
 
+			// check if null is false
+			if (!$nullable) {
+				// check if it can be auto incremented
+				$nullable = ($colInfo[$key]['Extra'] == "auto_increment" ? true : false);
+				// check if nullable is false again
+				if (!$nullable) {
+					// check if it uses current timestamp
+					$nullable = ($colInfo[$key]['Default'] == "CURRENT_TIMESTAMP" ? true : false);
+				}
+			}
+
 			// try to validate
 			$error = self::validateField($key, $result, $type, $nullable);
 
@@ -73,9 +84,16 @@ class Form {
 		$error = "";
 
 		// check if its allowed to be empty
-		if (strlen($value) == 0 && !$nullable) {
-			// display error saying this shouldnt be empty
-			$error = "The field $fieldName is not allowed to be empty";
+		if (strlen($value) == 0) {
+			if (!$nullable) {
+				// display error saying this shouldnt be empty
+				$error = "The field $fieldName is not allowed to be empty";
+			} else {
+				// check if datetime
+				if ($type == "timestamp") {
+					$value = self::getSQLDateTime();
+				}
+			}
 		} else {
 			// proceed with length validation
 
@@ -251,12 +269,17 @@ class Form {
 	 * If it cannot, it passes back the current dateTime
 	 */
 	static function getSQLDateTime($date = "") {
-		// convert to unix time stamp
-		$dt = strtotime($date);
+		$dt = null;
+	
+		if (!empty($date)) {
+			// convert to unix time stamp
+			$dt = strtotime($date);
 
-		// change to mySQL format-> YYYY-MM-DD HH:mm:SS
-		$dt = @date("Y-m-d H:i:s", $dt);
+			// change to mySQL format-> YYYY-MM-DD HH:mm:SS
+			$dt = @date("Y-m-d H:i:s", $dt);
 
+		}
+		
 		// if date failed, use current time
 		if (!$dt) {
 			$dt = @date("Y-m-d H:i:s", time());
