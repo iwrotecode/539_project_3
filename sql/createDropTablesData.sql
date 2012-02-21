@@ -26,7 +26,22 @@ SET time_zone = "+00:00";
 -- Table structure for table `cms_ads`
 --
 
+DROP TABLE IF EXISTS `cms_ads_which_edition`;
+DROP TABLE IF EXISTS `cms_news_which_edition`;
+
+DROP TABLE IF EXISTS `cms_user`;
+DROP TABLE IF EXISTS `cms_user_type`;
+
 DROP TABLE IF EXISTS `cms_ads`;
+DROP TABLE IF EXISTS `cms_banner`;
+DROP TABLE IF EXISTS `cms_edition`;
+DROP TABLE IF EXISTS `cms_editorial`;
+DROP TABLE IF EXISTS `cms_news`;
+
+
+
+
+
 CREATE TABLE IF NOT EXISTS `cms_ads` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
@@ -54,7 +69,7 @@ INSERT INTO `cms_ads` (`id`, `title`, `content`, `pubdate`, `approved`) VALUES
 -- Table structure for table `cms_ads_which_edition`
 --
 
-DROP TABLE IF EXISTS `cms_ads_which_edition`;
+
 CREATE TABLE IF NOT EXISTS `cms_ads_which_edition` (
   `ads_id` int(11) NOT NULL,
   `edition_id` int(11) NOT NULL,
@@ -83,7 +98,7 @@ INSERT INTO `cms_ads_which_edition` (`ads_id`, `edition_id`) VALUES
 -- Table structure for table `cms_banner`
 --
 
-DROP TABLE IF EXISTS `cms_banner`;
+
 CREATE TABLE IF NOT EXISTS `cms_banner` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `filename` varchar(100) NOT NULL,
@@ -113,7 +128,7 @@ INSERT INTO `cms_banner` (`id`, `filename`, `count`, `weight`) VALUES
 -- Table structure for table `cms_edition`
 --
 
-DROP TABLE IF EXISTS `cms_edition`;
+
 CREATE TABLE IF NOT EXISTS `cms_edition` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `editionname` varchar(100) NOT NULL,
@@ -137,7 +152,7 @@ INSERT INTO `cms_edition` (`id`, `editionname`) VALUES
 -- Table structure for table `cms_editorial`
 --
 
-DROP TABLE IF EXISTS `cms_editorial`;
+
 CREATE TABLE IF NOT EXISTS `cms_editorial` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `content` text NOT NULL,
@@ -160,7 +175,7 @@ INSERT INTO `cms_editorial` (`id`, `content`, `current`, `pubdate`) VALUES
 -- Table structure for table `cms_news`
 --
 
-DROP TABLE IF EXISTS `cms_news`;
+
 CREATE TABLE IF NOT EXISTS `cms_news` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `subject` varchar(255) NOT NULL,
@@ -214,7 +229,7 @@ INSERT INTO `cms_news` (`id`, `subject`, `content`, `pubdate`) VALUES
 -- Table structure for table `cms_news_which_edition`
 --
 
-DROP TABLE IF EXISTS `cms_news_which_edition`;
+
 CREATE TABLE IF NOT EXISTS `cms_news_which_edition` (
   `news_id` int(11) NOT NULL,
   `edition_id` int(11) NOT NULL,
@@ -242,7 +257,7 @@ INSERT INTO `cms_news_which_edition` (`news_id`, `edition_id`) VALUES
 -- Table structure for table `cms_user`
 --
 
-DROP TABLE IF EXISTS `cms_user`;
+
 CREATE TABLE IF NOT EXISTS `cms_user` (
   `username` varchar(10) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -270,7 +285,7 @@ INSERT INTO `cms_user` (`username`, `email`, `password`, `access`) VALUES
 -- Table structure for table `cms_user_type`
 --
 
-DROP TABLE IF EXISTS `cms_user_type`;
+
 CREATE TABLE IF NOT EXISTS `cms_user_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_type` varchar(10) NOT NULL,
