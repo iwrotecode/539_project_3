@@ -15,7 +15,7 @@ function __autoload($className) {
 $db = Database::getInstance();
 
 // build the query to get the editorial
-$query = "select content from cms_editorial where current=1 order by current DESC, pubdate DESC limit 0, 1";
+$query = "select content from cms_editorial where current<>0 order by current DESC, pubdate DESC limit 0, 1";
 // execute the query
 $db -> doQuery($query);
 
