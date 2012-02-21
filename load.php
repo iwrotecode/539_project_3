@@ -79,6 +79,7 @@ if ($accessLevel != Utils::getAdminLevel()) {
 					} else {
 						// append error to errors stream
 						$errors .= $tempError;
+						$errors .= "<p style='text-align:center'>- defaulting to file dropdown -</p>";
 					}
 				}
 
