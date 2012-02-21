@@ -8,5 +8,31 @@ load.php
 	-imports the date
 	
 admin.php
-	-
+	-if field is auto-incremented, or timestamped
+		|-> input can be empty
+		
+banner.php
+ -gets banner based on weighted system	
+ 
+___________________________________________
+
+Login info:
+
+
+Professor
+username: test	 
+password: Test1234
+
+Editor	
+username: editor	 
+password: Test1234
+
+Advertiser
+username: advertiser	 
+password: Test1234
+
+None
+username: none	 
+password: Test1234
+
 	

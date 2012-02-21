@@ -1,3 +1,4 @@
+name | count | weight
 ad1.png|0|3
 ad2.png|0|2
 ad3.png|0|1
