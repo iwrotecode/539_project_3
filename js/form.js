@@ -14,10 +14,12 @@ $(document).ready(function(){
 		// get the length of the input
 		var inputWidth = $(this).width();
 		
+		var value = $(this).val();s
+		
 		// temporarily create a span to mesure the width
 		var temp = document.createElement("span");
 		// append the value to the width
-		temp.appendChild(document.createTextNode($(this).val())); 
+		temp.appendChild(document.createTextNode(value)); 
 		
 		// append span to the body
 		document.body.appendChild(temp);
@@ -31,6 +33,8 @@ $(document).ready(function(){
 		// check if the width is bigger than the input
 		if(inputWidth < valueWidth){
 			// do the lightbox 
+			
+			
 		}
 		
 		console.log("iWidth: "+inputWidth+" | uWidth: "+valueWidth);
