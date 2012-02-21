@@ -7,9 +7,29 @@ class Form {
 	// Sanitize data before validation
 	static function sanitizeResults(&$results) {
 		// sanitize everything in the results
-		foreach ($results as $result) {
+		foreach ($results as &$result) {
 			self::sanitize_data($result);
 		}
+	}
+
+	/**
+	 * Sanitizes the passed in value, and updates it
+	 */
+	static function sanitize_data(&$var) {
+		echo "before";
+		var_dump($var);
+
+		// only need to sanitize strings
+		if (is_string($var)) {
+			$var = trim($var);
+			$var = stripslashes($var);
+			// $var = htmlentities($var);
+			$var = strip_tags($var);
+			$var = preg_replace('/\r\n/', '<br />', $var);
+		}
+
+		echo "after";
+		var_dump($var);
 	}
 
 	// make sure if the results are valid
@@ -23,7 +43,7 @@ class Form {
 		// get the col info
 		$colInfo = $db -> getColInfo($tableName);
 
-		foreach ($results as $key => $result) {
+		foreach ($results as $key => &$result) {
 			// get the type for this field
 			$type = $colInfo[$key]['Type'];
 			// get if nullable
@@ -69,7 +89,7 @@ class Form {
 			$start = stripos($type, "(") + 1;
 			$end = stripos($type, ")");
 			$maxLen = intval(substr($type, $start, $end - $start));
-			
+
 			// check if value length exceeds maximum length
 			if ($maxLen != 0 && strlen($value) > $maxLen) {
 				// exceeds length diplay errror
@@ -80,12 +100,12 @@ class Form {
 				// grab the type
 				// check to see if there is a length passed
 				$end = stripos($type, "(");
-				
+
 				// if not, then the end is the entire length
-				if(!$end){
+				if (!$end) {
 					$end = strlen($type);
 				}
-				
+
 				$type = substr($type, 0, $end);
 
 				$errType = "";
@@ -153,20 +173,6 @@ class Form {
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Sanitizes the passed in value, and updates it
-	 */
-	static function sanitize_data(&$var) {
-		// only need to sanitize strings
-		if (is_string($var)) {
-			$var = trim($var);
-			$var = stripslashes($var);
-			// $var = htmlentities($var);
-			$var = strip_tags($var);
-			$var = preg_replace('/\r\n/', '<br />', $var);
-		}
 	}
 
 	/**

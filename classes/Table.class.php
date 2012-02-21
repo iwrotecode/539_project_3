@@ -283,7 +283,7 @@ class Table {
 
 		// Sanitize data before validation
 		Form::sanitizeResults($fields);
-
+		
 		// make sure if the results are valid
 		$error = Form::validateResults($fields, $tableName);
 
