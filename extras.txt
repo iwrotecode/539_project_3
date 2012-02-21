@@ -1,0 +1,12 @@
+Everything
+	-stylized
+
+load.php
+	-file upload
+		|->if failure, uses the filname from the select element
+	-select element for files already on server
+	-imports the date
+	
+admin.php
+	-
+	
