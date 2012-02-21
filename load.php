@@ -167,8 +167,6 @@ function processGetTableInfo() {
 function processImport() {
 	$error = "";
 
-	echo "<div class='content'>";
-
 	// get all the field names
 	$fieldNames = $_SESSION['fieldnames'];
 	// get the tableaName
@@ -180,7 +178,10 @@ function processImport() {
 	// grab the has headers
 	$hasHeaderRow = $_SESSION['hasHeaders'];
 
-	echo "<h1>Results of Import to $tableName</h1>";
+	// add a header
+	echo "<p class='warning'>Results of Import to $tableName</p>";
+
+	echo "<div class='content_results' style='min-width:15em'>";
 
 	if (!empty($fieldNames) && !empty($tableName) && !empty($fileName) && !empty($delim)) {
 		// get the records from the file
