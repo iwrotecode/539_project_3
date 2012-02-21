@@ -16,20 +16,14 @@ class Form {
 	 * Sanitizes the passed in value, and updates it
 	 */
 	static function sanitize_data(&$var) {
-		echo "before";
-		var_dump($var);
-
 		// only need to sanitize strings
 		if (is_string($var)) {
 			$var = trim($var);
 			$var = stripslashes($var);
-			// $var = htmlentities($var);
 			$var = strip_tags($var);
+			// $var = htmlentities($var);
 			$var = preg_replace('/\r\n/', '<br />', $var);
 		}
-
-		echo "after";
-		var_dump($var);
 	}
 
 	// make sure if the results are valid

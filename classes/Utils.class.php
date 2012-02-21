@@ -29,7 +29,7 @@ class Utils {
 	 *
 	 * @return an error string if there were any errors
 	 */
-	static function updloadFile($file, $location) {
+	static function uploadFile($file, $location) {
 		$errors = "";
 		
 		// check if there was an error
@@ -39,16 +39,19 @@ class Utils {
 						on the filename choosen in the select.</p>";
 		} else {
 			// no errors, proceed with upload validation
-
-			// upload to the correct location
-			// grab the name
-			$name = $file["name"];
-			// grab the tmp name
-			$tmpName = $file['tmp_name'];
-			// grab the new location
-			$loc = $location . $name;
-			// move to new loaction
-			move_uploaded_file($name, $loc);
+			if (($file["type"] == "text/plain") || ($file["type"] == "application/vnd.ms-excel") && ($file["size"] < 20000)) {
+				// upload to the correct location
+				// grab the name
+				$name = $file["name"];
+				// grab the tmp name
+				$tmpName = $file['tmp_name'];
+				// grab the new location
+				$loc = $location . $name;
+				// move to new loaction
+				move_uploaded_file($name, $loc);
+			} else {
+				$errors .= "<p>File uploaded was not a .txt, or larger than 20kb</p>";
+			}
 		}
 		
 		return $errors;
