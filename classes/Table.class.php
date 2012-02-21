@@ -195,7 +195,8 @@ class Table {
 		// checks to see if database table has content
 		if (!empty($results)) {
 			// starts html table
-			$string = "<div class='content_results'>";
+			$string = "<p class='titles'>$tableName</p>";
+			$string .= "<div class='content_results'>";
 			$string .= "<div class='table'>";
 			$string .= "<div class='tr'>";
 

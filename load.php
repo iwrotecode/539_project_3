@@ -68,9 +68,9 @@ if ($accessLevel != Utils::getAdminLevel()) {
 			if (Utils::arrayContainsVals($_POST, $reqFields)) {
 
 				// TODO: check if they have a file, and if there was an error
-				if (isset($_FILES['datafile']) && !empty($_FILES['datafile']['size'])) { 
+				if (isset($_FILES['datafile']) && !empty($_FILES['datafile']['size'])) {
 					$file = $_FILES['datafile'];
-					
+
 					$tempError = Utils::uploadFile($file, Utils::getLoadFileLoc() . "/");
 
 					if (empty($tempError)) {
@@ -111,20 +111,21 @@ if ($accessLevel != Utils::getAdminLevel()) {
 			}
 		}
 	}
-	// close content container div
-	echo "</div>";
 
-}
-
-// display errors
-if (!empty($errors)) {
 	// display errors
-	echo <<<END
+	if (!empty($errors)) {
+		// display errors
+		echo <<<END
 		<div class="error_message">
 			$errors
 		</div>
 
 END;
+	}
+
+	// close content container div
+	echo "</div>";
+
 }
 
 // end the page
@@ -419,8 +420,11 @@ function addChooseFileForm() {
 	global $submitFileName;
 	$result = "";
 
+	// shows explanation of multi options
+	$result .= "<p class='warning'>If no uploaded file is found or specified, <br /> the system will default to the selected file</p>";
+
 	// add the first form
-	$result .= "<div class='content'>\n";
+	$result .= "<div class='content_results'>\n";
 	$result .= "<form method=\"post\" enctype=\"multipart/form-data\">\n";
 
 	// add table select
@@ -435,7 +439,6 @@ function addChooseFileForm() {
 	// get the file names in the load data directory
 	$fileNames = Utils::getFileNames(Utils::getLoadFileLoc());
 	// $result .= '<input type="hidden" name="fileName" value="This page does not meet all project requirements" />';
-
 	$result .= "<div class='form_field_rfloat'>";
 	$result .= "<label for=\"fileName\">File Name: </label>\n";
 	$result .= Form::buildSelect($fileNames, "fileName");
