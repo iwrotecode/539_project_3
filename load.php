@@ -370,10 +370,11 @@ function buildFieldAssocForm($tableName, $fileName, $delim, $hasHeaderRow, $fiel
 	$result = "";
 	// ******************* BUILD THE FORM ***********************
 
-	// build the form
-	$result = "<div class='content_results' >\n";
 	// add a header
-	$result .= "<h2>Import " . basename($fileName) . " to $tableName</h2>";
+	$result .= "<p class='warning'>Import " . basename($fileName) . " to $tableName</p>";
+
+	// build the form
+	$result .= "<div class='content_results' >\n";
 
 	$result .= "<form method=\"post\">\n";
 
