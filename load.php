@@ -112,21 +112,21 @@ if ($accessLevel != Utils::getAdminLevel()) {
 		}
 	}
 
+}
+
+// display errors
+if (!empty($errors)) {
 	// display errors
-	if (!empty($errors)) {
-		// display errors
-		echo <<<END
+	echo <<<END
 		<div class="error_message">
 			$errors
 		</div>
 
 END;
-	}
-
-	// close content container div
-	echo "</div>";
-
 }
+
+// close content container div
+echo "</div>";
 
 // end the page
 echo Page::footer();
