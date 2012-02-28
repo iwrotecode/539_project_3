@@ -14,6 +14,10 @@ admin.php
 banner.php
  -gets banner based on weighted system	
  
+Database
+	-new table: cms_user_type
+		|-> Made to have the access level in the user table point to this
+ 
 ___________________________________________
 
 Login info:
